@@ -1,67 +1,59 @@
 import os
+# 이 줄이 다른 import보다 먼저 와야 합니다!
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
+
 import torch
-from ultralytics import YOLO
 import pandas as pd
 import numpy as np
-import cv2
+import glob
+from ultralytics import YOLO
+import multiprocessing
 import time
 import threading
-import glob
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
+multiprocessing.set_start_method('spawn', force=True)
 
-def get_next_result_folder():
-    existing_folders = glob.glob("F:/yolo/result*")
-    if not existing_folders:
-        return "F:/yolo/result"
-    max_num = 0
-    for folder in existing_folders:
-        if folder == "F:/yolo/result":
-            max_num = max(max_num, 1)
-        else:
-            try:
-                num = int(folder.split("result")[-1])
-                max_num = max(max_num, num)
-            except ValueError:
-                continue
-    return f"F:/yolo/result{max_num + 1}"
-
-def process_video(video_path, model_path, cam_name, result_folder, device):
+def process_video(video_path, model_path, device, result_folder):
+    # 입력 영상 파일명(확장자 제외) 추출
+    video_name = os.path.splitext(os.path.basename(video_path))[0]
+    
+    # 결과 CSV 파일이 저장될 result 폴더 생성 (이미 존재하면 무시)
+    os.makedirs(result_folder, exist_ok=True)
+    
+    print(f"Processing {video_name}: {video_path}")
+    
+    # YOLO 모델 로드 및 설정
     model = YOLO(model_path)
     model = model.to(device)
     model.conf = 0.2
     model.imgsz = (960, 960)
     
-    save_dir = os.path.join(result_folder, cam_name)
-    os.makedirs(save_dir, exist_ok=True)
-    
-    if not os.path.exists(video_path):
-        print(f"Error: Video file not found: {video_path}")
-        return
-    
-    print(f"Processing {cam_name}: {video_path}")
-    print(f"Results will be saved to {save_dir}")
-    
     all_keypoints = []
     
-    results = model(video_path,
-                    task='pose',
-                    stream=True,
-                    save=True,
-                    project=save_dir,
-                    name="",
-                    device=device,
-                    verbose=False)
+    # 영상 처리 (영상 저장 없이 CSV 데이터만 생성)
+    try:
+        results = model(video_path,
+                        task='pose',
+                        stream=True,
+                        save=False,      # 영상 저장하지 않음
+                        device=device,
+                        verbose=False)
+    except Exception as e:
+        print(f"Error processing video {video_name}: {str(e)}")
+        return
     
+    # 각 프레임별 키포인트 추출
     for frame_idx, r in enumerate(results):
-        print(f"\r{cam_name} - Processing frame: {frame_idx + 1}", end="")
+        print(f"\r{video_name} - Processing frame: {frame_idx + 1}", end="")
         frame_dict = {'frame': frame_idx}
+        
         try:
             if (r.keypoints is not None and 
                 len(r.keypoints.data) > 0 and 
                 r.keypoints.data[0].shape[0] > 0):
-                
+                # 첫 번째 감지된 사람의 키포인트 추출
                 keypoints = r.keypoints.data[0].cpu().numpy()
                 frame_dict['person_detected'] = True
-                
                 for i, name in enumerate(['nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
                                            'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
                                            'left_wrist', 'right_wrist', 'left_hip', 'right_hip',
@@ -75,6 +67,7 @@ def process_video(video_path, model_path, cam_name, result_folder, device):
                         frame_dict[f'{name}_y'] = 0.0
                         frame_dict[f'{name}_conf'] = 0.0
             else:
+                # 사람이 감지되지 않은 경우
                 frame_dict['person_detected'] = False
                 for name in ['nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
                              'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
@@ -84,7 +77,7 @@ def process_video(video_path, model_path, cam_name, result_folder, device):
                     frame_dict[f'{name}_y'] = 0.0
                     frame_dict[f'{name}_conf'] = 0.0
         except Exception as e:
-            print(f"\n{cam_name} - Error processing frame {frame_idx}: {str(e)}")
+            print(f"\n{video_name} - Error processing frame {frame_idx}: {str(e)}")
             frame_dict['person_detected'] = False
             for name in ['nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
                          'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
@@ -93,49 +86,45 @@ def process_video(video_path, model_path, cam_name, result_folder, device):
                 frame_dict[f'{name}_x'] = 0.0
                 frame_dict[f'{name}_y'] = 0.0
                 frame_dict[f'{name}_conf'] = 0.0
-        
+                
         all_keypoints.append(frame_dict)
     
+    # 전체 프레임의 키포인트 데이터를 CSV 파일로 저장 (파일명은 입력 영상명 기준)
     if all_keypoints:
         df = pd.DataFrame(all_keypoints)
-        df.to_csv(f"{save_dir}/keypoints.csv", index=False)
-        print(f"\n{cam_name} - Keypoints saved to {save_dir}/keypoints.csv")
+        csv_path = os.path.join(result_folder, f"{video_name}.csv")
+        df.to_csv(csv_path, index=False)
+        print(f"\n{video_name} - Keypoints saved to {csv_path}")
     
-    print(f"\n{cam_name} - Total frames processed: {len(all_keypoints)}")
+    print(f"\n{video_name} - Total frames processed: {len(all_keypoints)}")
 
 def main():
+    # CUDA 사용 가능 여부 확인
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     if device == 'cuda':
         print("Using device: cuda")
     else:
         print("CUDA is not available, using CPU")
     
-    video1 = r"F:\yolo\data\cam1\Thread-1_2025-02-20_09-31-18.mp4"
-    video2 = r"F:\yolo\data\cam2\Thread-2_2025-02-20_09-31-18.mp4"
+    model_path = r"yolo.pt"
+    result_folder = r"result"
     
-    result_folder = get_next_result_folder()
-    print(f"Using result folder: {result_folder}")
+    # data 디렉토리 내 모든 mp4 파일 목록 생성
+    video_files = glob.glob(os.path.join("data", "*.mp4"))
+    if not video_files:
+        print("No video files found in the 'data' directory.")
+        return
     
-    model_path = r"F:/yolo/yolo.pt"
+    # multiprocessing을 위한 인자 리스트 생성
+    args = [(video, model_path, device, result_folder) for video in video_files]
     
-    thread1 = threading.Thread(
-        target=process_video, 
-        args=(video1, model_path, "cam1", result_folder, device)
-    )
+    # 사용 가능한 CPU 코어 수나 파일 수 중 작은 값만큼 프로세스 생성
+    pool = multiprocessing.Pool(processes=min(len(video_files), multiprocessing.cpu_count()))
+    pool.starmap(process_video, args)
+    pool.close()
+    pool.join()
     
-    thread2 = threading.Thread(
-        target=process_video, 
-        args=(video2, model_path, "cam2", result_folder, device)
-    )
-    
-    thread1.start()
-    time.sleep(1)
-    thread2.start()
-    
-    thread1.join()
-    thread2.join()
-    
-    print(f"\nAll videos processed. Results saved to {result_folder}")
+    print("\nAll videos processed. CSV files saved in the result folder.")
 
 if __name__ == "__main__":
-    main()
+    main() 

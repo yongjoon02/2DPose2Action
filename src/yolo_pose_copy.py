@@ -1,102 +1,67 @@
-# 필요한 라이브러리들을 임포트합니다
-import os                  # 파일/폴더 경로 관리를 위한 라이브러리
-import torch              # 딥러닝 연산을 위한 PyTorch
-import pandas as pd       # 데이터프레임 처리를 위한 pandas
-import numpy as np        # 수치 연산을 위한 numpy
-import cv2               # 영상 처리를 위한 OpenCV
-import time              # 시간 지연 기능을 위한 time
-import threading         # 멀티스레딩을 위한 threading
-import glob              # 파일 경로 패턴 매칭을 위한 glob
+import os
+import torch
+import pandas as pd
+import numpy as np
+import glob
 from ultralytics import YOLO
-
-def get_next_result_folder():
-    # 'F:/yolo/result*' 패턴의 모든 폴더를 찾습니다
-    existing_folders = glob.glob("F:/yolo/result*")
-    # 기존 폴더가 없으면 기본 'result' 폴더를 반환합니다s
-    if not existing_folders:
-        return "F:/yolo/result"
-    max_num = 0
-    for folder in existing_folders:
-        # 기본 'result' 폴더가 있으면 최소값을 1로 설정
-        if folder == "F:/yolo/result":
-            max_num = max(max_num, 1)
-        else:
-            try:
-                # 폴더 이름에서 숫자 부분을 추출하여 최대값 갱신
-                num = int(folder.split("result")[-1])
-                max_num = max(max_num, num)
-            except ValueError:
-                continue
-    # 최대 번호 + 1로 새 폴더 이름 생성
-    return f"F:/yolo/result{max_num + 1}"
-
-def process_video(video_path, model_path, cam_name, result_folder, device):
-    # YOLO 모델을 로드하고 설정합니다
+import multiprocessing
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
+multiprocessing.set_start_method('spawn', force=True)
+def process_video(video_path, model_path, device, result_folder):
+    # 입력 영상 파일명(확장자 제외) 추출
+    video_name = os.path.splitext(os.path.basename(video_path))[0]
+    
+    # 결과 CSV 파일이 저장될 result 폴더 생성 (이미 존재하면 무시)
+    os.makedirs(result_folder, exist_ok=True)
+    
+    print(f"Processing {video_name}: {video_path}")
+    
+    # YOLO 모델 로드 및 설정
     model = YOLO(model_path)
-    model = model.to(device)          # GPU/CPU 설정
-    model.conf = 0.2                  # 검출 신뢰도 임계값 설정
-    model.imgsz = (960, 960)         # 입력 이미지 크기 설정
+    model = model.to(device)
+    model.conf = 0.2
+    model.imgsz = (960, 960)
     
-    # 결과 저장 경로 생성
-    save_dir = os.path.join(result_folder, cam_name)
-    os.makedirs(save_dir, exist_ok=True)
-    
-    # 입력 비디오 파일 존재 여부 확인
-    if not os.path.exists(video_path):
-        print(f"Error: Video file not found: {video_path}")
-        return
-    
-    # 처리 시작 메시지 출력
-    print(f"Processing {cam_name}: {video_path}")
-    print(f"Results will be saved to {save_dir}")
-    
-    # 키포인트 데이터를 저장할 리스트 초기화
     all_keypoints = []
     
-    # YOLO 모델로 비디오 처리 시작
-    results = model(video_path,
-                    task='pose',          # 포즈 인식 작업 설정
-                    stream=True,          # 스트리밍 모드 활성화
-                    save=True,            # 결과 영상 저장
-                    project=save_dir,     # 저장 경로 설정
-                    name="",              # 결과 파일 이름
-                    device=device,        # 처리 장치 설정
-                    verbose=False)        # 상세 출력 비활성화
+    # 영상 처리 (영상 저장 없이 CSV 데이터만 생성)
+    try:
+        results = model(video_path,
+                        task='pose',
+                        stream=True,
+                        save=False,      # 영상 저장하지 않음
+                        device=device,
+                        verbose=False)
+    except Exception as e:
+        print(f"Error processing video {video_name}: {str(e)}")
+        return
     
-    # 각 프레임별 처리
+    # 각 프레임별 키포인트 추출
     for frame_idx, r in enumerate(results):
-        # 현재 처리 중인 프레임 번호 출력
-        print(f"\r{cam_name} - Processing frame: {frame_idx + 1}", end="")
-        # 현재 프레임의 데이터를 저장할 딕셔너리 초기화
+        print(f"\r{video_name} - Processing frame: {frame_idx + 1}", end="")
         frame_dict = {'frame': frame_idx}
         
         try:
-            # 키포인트가 감지된 경우
             if (r.keypoints is not None and 
                 len(r.keypoints.data) > 0 and 
                 r.keypoints.data[0].shape[0] > 0):
-                
                 # 첫 번째 감지된 사람의 키포인트 추출
                 keypoints = r.keypoints.data[0].cpu().numpy()
                 frame_dict['person_detected'] = True
-                
-                # 각 키포인트의 x, y 좌표와 신뢰도 저장
                 for i, name in enumerate(['nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
                                            'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
                                            'left_wrist', 'right_wrist', 'left_hip', 'right_hip',
                                            'left_knee', 'right_knee', 'left_ankle', 'right_ankle']):
                     if i < len(keypoints):
-                        # 감지된 키포인트 좌표와 신뢰도 저장
                         frame_dict[f'{name}_x'] = float(keypoints[i][0])
                         frame_dict[f'{name}_y'] = float(keypoints[i][1])
                         frame_dict[f'{name}_conf'] = float(keypoints[i][2])
                     else:
-                        # 감지되지 않은 키포인트는 0으로 설정
                         frame_dict[f'{name}_x'] = 0.0
                         frame_dict[f'{name}_y'] = 0.0
                         frame_dict[f'{name}_conf'] = 0.0
             else:
-                # 사람이 감지되지 않은 경우 모든 값을 0으로 설정
+                # 사람이 감지되지 않은 경우
                 frame_dict['person_detected'] = False
                 for name in ['nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
                              'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
@@ -105,10 +70,8 @@ def process_video(video_path, model_path, cam_name, result_folder, device):
                     frame_dict[f'{name}_x'] = 0.0
                     frame_dict[f'{name}_y'] = 0.0
                     frame_dict[f'{name}_conf'] = 0.0
-        
         except Exception as e:
-            # 오류 발생 시 에러 메시지 출력하고 모든 값을 0으로 설정
-            print(f"\n{cam_name} - Error processing frame {frame_idx}: {str(e)}")
+            print(f"\n{video_name} - Error processing frame {frame_idx}: {str(e)}")
             frame_dict['person_detected'] = False
             for name in ['nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
                          'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
@@ -117,48 +80,45 @@ def process_video(video_path, model_path, cam_name, result_folder, device):
                 frame_dict[f'{name}_x'] = 0.0
                 frame_dict[f'{name}_y'] = 0.0
                 frame_dict[f'{name}_conf'] = 0.0
-        
-        # 프레임 데이터를 전체 리스트에 추가
+                
         all_keypoints.append(frame_dict)
     
-    # 모든 키포인트 데이터를 CSV 파일로 저장
+    # 전체 프레임의 키포인트 데이터를 CSV 파일로 저장 (파일명은 입력 영상명 기준)
     if all_keypoints:
         df = pd.DataFrame(all_keypoints)
-        df.to_csv(f"{save_dir}/keypoints.csv", index=False)
-        print(f"\n{cam_name} - Keypoints saved to {save_dir}/keypoints.csv")
+        csv_path = os.path.join(result_folder, f"{video_name}.csv")
+        df.to_csv(csv_path, index=False)
+        print(f"\n{video_name} - Keypoints saved to {csv_path}")
     
-    # 처리 완료 메시지 출력
-    print(f"\n{cam_name} - Total frames processed: {len(all_keypoints)}")
-
-
+    print(f"\n{video_name} - Total frames processed: {len(all_keypoints)}")
 
 def main():
-    # GPU 사용 가능 여부 확인
+    # CUDA 사용 가능 여부 확인
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     if device == 'cuda':
         print("Using device: cuda")
     else:
         print("CUDA is not available, using CPU")
     
-    # 처리할 비디오 파일 경로 설정
-    video = r"C:\Users\User\Desktop\Yolo\data\copy_data\video_20250226_114832_408.mp4"
+    model_path = r"yolo.pt"
+    result_folder = r"result"
     
-    # 결과 저장 폴더 생성
-    result_folder = r"C:\Users\User\Desktop\Yolo\copy_result"
-    print(f"Using result folder: {result_folder}")
+    # data 디렉토리 내 모든 mp4 파일 목록 생성
+    video_files = glob.glob(os.path.join("data", "*.mp4"))
+    if not video_files:
+        print("No video files found in the 'data' directory.")
+        return
     
-    # YOLO 모델 파일 경로 설정
-    model_path = r"C:\Users\User\Desktop\Yolo\yolo.pt"
+    # multiprocessing을 위한 인자 리스트 생성
+    args = [(video, model_path, device, result_folder) for video in video_files]
+    
+    # 사용 가능한 CPU 코어 수나 파일 수 중 작은 값만큼 프로세스 생성
+    pool = multiprocessing.Pool(processes=min(len(video_files), multiprocessing.cpu_count()))
+    pool.starmap(process_video, args)
+    pool.close()
+    pool.join()
+    
+    print("\nAll videos processed. CSV files saved in the result folder.")
 
-    process_video(video, model_path, "copy_video", result_folder,  device) 
-    
-  
-  
-    
-    
-    # 모든 처리 완료 메시지 출력
-    print(f"\nAll videos processed. Results saved to {result_folder}")
-
-# 스크립트가 직접 실행될 때만 main() 함수 실행
 if __name__ == "__main__":
     main()
