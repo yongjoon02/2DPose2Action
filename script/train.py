@@ -660,9 +660,14 @@ def main():
     
     y_labels = np.array(list(dataset.file_labels.values()))
     
+    # 기본 결과 저장 폴더를 "tcn_result"로 설정
+    base_result_dir = "tcn_result"
+    os.makedirs(base_result_dir, exist_ok=True)
+    
     for fold, (train_idx, test_idx) in enumerate(kfold.split(np.zeros(len(dataset)), y_labels)):
         print(f"\n{'='*30} Fold {fold+1}/{num_folds} {'='*30}")
-        fold_dir = f"fold_{fold+1}"
+        # 각 Fold 결과는 tcn_result/fold_x 폴더에 저장
+        fold_dir = os.path.join(base_result_dir, f"fold_{fold+1}")
         os.makedirs(fold_dir, exist_ok=True)
         
         train_indices, valid_indices = [], []
@@ -712,11 +717,13 @@ def main():
         
         print(f"Fold {fold+1} - Loss: {test_loss:.4f}, Accuracy: {test_acc:.2f}%")
     
-    os.makedirs("ensemble_results", exist_ok=True)
+    # 앙상블 결과 폴더도 tcn_result 하위에 생성
+    ensemble_result_dir = os.path.join(base_result_dir, "ensemble_results")
+    os.makedirs(ensemble_result_dir, exist_ok=True)
     for filename, all_preds in ensemble_predictions.items():
         ensembled_preds = ensemble_predictions_with_confidence(all_preds, ensemble_softmax[filename])
         final_preds = apply_temporal_consistency(ensembled_preds, min_duration=10)
-        json_path = os.path.join("ensemble_results", filename.replace(".csv", "_prediction.json"))
+        json_path = os.path.join(ensemble_result_dir, filename.replace(".csv", "_prediction.json"))
         with open(json_path, 'w') as f:
             json.dump(final_preds, f, indent=4)
     
@@ -730,3 +737,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

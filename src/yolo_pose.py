@@ -121,7 +121,7 @@ def main():
     model_path = r"yolo.pt"
     
     # 결과 폴더 이름 생성 (이미 존재하는 경우 번호 부여)
-    base_result_folder = r"result"
+    base_result_folder = r"skeleton/result"
     result_folder = get_available_folder(base_result_folder)
     print(f"결과 폴더: {result_folder}")
     
