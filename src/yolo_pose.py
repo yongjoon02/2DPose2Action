@@ -1,5 +1,4 @@
 import os
-# 이 줄이 다른 import보다 먼저 와야 합니다!
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
 import torch
@@ -10,7 +9,6 @@ from ultralytics import YOLO
 import multiprocessing
 import time
 import threading
-os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 multiprocessing.set_start_method('spawn', force=True)
 
 def process_video(video_path, model_path, device, result_folder):
@@ -98,6 +96,20 @@ def process_video(video_path, model_path, device, result_folder):
     
     print(f"\n{video_name} - Total frames processed: {len(all_keypoints)}")
 
+def get_available_folder(base_name):
+    """
+    이미 존재하는 폴더인 경우 번호를 붙여 새 폴더명 생성
+    예: result가 있으면 result1, result1도 있으면 result2 등
+    """
+    folder_name = base_name
+    counter = 1
+    
+    while os.path.exists(folder_name):
+        folder_name = f"{base_name}{counter}"
+        counter += 1
+    
+    return folder_name
+
 def main():
     # CUDA 사용 가능 여부 확인
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -107,10 +119,14 @@ def main():
         print("CUDA is not available, using CPU")
     
     model_path = r"yolo.pt"
-    result_folder = r"result"
     
-    # data 디렉토리 내 모든 mp4 파일 목록 생성
-    video_files = glob.glob(os.path.join("data", "*.mp4"))
+    # 결과 폴더 이름 생성 (이미 존재하는 경우 번호 부여)
+    base_result_folder = r"result"
+    result_folder = get_available_folder(base_result_folder)
+    print(f"결과 폴더: {result_folder}")
+    
+
+    video_files = glob.glob(os.path.join("data/2d video", "*.mp4"))
     if not video_files:
         print("No video files found in the 'data' directory.")
         return
@@ -124,7 +140,7 @@ def main():
     pool.close()
     pool.join()
     
-    print("\nAll videos processed. CSV files saved in the result folder.")
+    print(f"\n모든 영상 처리 완료! CSV 파일들은 {result_folder} 폴더에 저장되었습니다.")
 
 if __name__ == "__main__":
-    main() 
+    main()
