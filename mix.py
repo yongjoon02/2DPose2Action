@@ -1,7 +1,7 @@
 """import os
 
 # 대상 디렉토리 경로
-directory = "F:/visceral_fat_pro"
+directory = "F:\didimdol2_label"
 
 def rename_files(directory):
     # 디렉토리 내 파일 목록 가져오기
@@ -24,40 +24,62 @@ def rename_files(directory):
             print(f"오류 발생 ({filename}): {str(e)}")
 
 # 함수 실행
-rename_files(directory)
-"""
+rename_files(directory)"""
+
 """import os
 import re
 
 # 파일이 있는 디렉토리 경로를 지정하세요.
-directory = r"F:\label_didimdol"
+directory = r"F:\didimdol2_label"
 
-# 정규식 패턴:
-#  ^\d{4}-\d{2}-\d{2}\s+(.*)$
-#   └─> ^\d{4}-\d{2}-\d{2} : 맨 앞에 YYYY-MM-DD 형태의 날짜
-#       \s+ : 공백(하나 이상)
-#       (.*) : 그 뒤의 모든 문자열(그룹1)
-pattern = re.compile(r'^\d{4}-\d{2}-\d{2}\s+(.*)$')
+# 날짜 패턴 (YYYY-MM-DD 형식으로 시작하는 파일명)
+date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}\s+(.*)$')
+
+# video ID 패턴 (video로 시작하여 .mp4 전까지의 부분)
+video_pattern = re.compile(r'(video[^.]*?)\.mp4')
 
 for filename in os.listdir(directory):
     old_path = os.path.join(directory, filename)
     
     # 디렉토리가 아닌 실제 파일만 처리
     if os.path.isfile(old_path):
-        match = pattern.match(filename)
-        if match:
-            # 그룹1: 날짜 다음 부분 (예: "video_20250225_111616_250")
-            rest_part = match.group(1)
+        # 1단계: 날짜 부분 제거
+        date_match = date_pattern.match(filename)
+        if date_match:
+            # 날짜 이후 부분 (예: "video_20250225_111616_250.mp4.json")
+            rest_part = date_match.group(1)
             
-            # 새 파일명
-            new_filename = rest_part
-            new_path = os.path.join(directory, new_filename)
-            
-            # 파일명 변경
-            os.rename(old_path, new_path)
-            print(f"Renamed '{filename}' -> '{new_filename}'")
+            # 2단계: video ID 추출
+            video_match = video_pattern.search(rest_part)
+            if video_match:
+                # video로 시작하여 .mp4 전까지 (예: "video_20250225_111616_250")
+                video_id = video_match.group(1)
+                
+                # 파일 확장자 가져오기 (원본 확장자 유지)
+                _, ext = os.path.splitext(filename)
+                
+                # 새 파일명: video ID + 원본 확장자
+                new_filename = f"{video_id}{ext}"
+                new_path = os.path.join(directory, new_filename)
+                
+                # 파일명 변경
+                os.rename(old_path, new_path)
+                print(f"Renamed '{filename}' -> '{new_filename}'")
+            else:
+                print(f"Video pattern not found in: {rest_part}")
         else:
-            print(f"Pattern not matched: {filename}")"""
+            # 날짜 패턴 없이 직접 video ID 추출 시도
+            video_match = video_pattern.search(filename)
+            if video_match:
+                video_id = video_match.group(1)
+                _, ext = os.path.splitext(filename)
+                new_filename = f"{video_id}{ext}"
+                new_path = os.path.join(directory, new_filename)
+                
+                os.rename(old_path, new_path)
+                print(f"Renamed '{filename}' -> '{new_filename}'")
+            else:
+                print(f"Pattern not matched: {filename}")"""
 
 """import os
 import glob
@@ -99,7 +121,7 @@ print("JSON 변환 완료!")"""
 
 
 
-import os
+"""import os
 import pandas as pd
 
 # 원본 CSV 파일들이 있는 폴더
@@ -134,4 +156,26 @@ for filename in os.listdir(src_folder):
         # 결과를 저장할 경로 지정 (파일명은 원본과 동일)
         save_path = os.path.join(dest_folder, filename)
         result.to_csv(save_path, index=False)
-        print("저장 완료:", save_path)
+        print("저장 완료:", save_path)"""
+
+import os
+import shutil
+
+# 경로 설정 (역슬래시 앞에 r을 붙여 raw string으로 사용)
+source_dir = r"F:\didimdol2"
+label_dir = r"F:\didimdol2_label"
+target_dir = r"F:\yolo\data\2d video"
+
+# 대상 디렉토리가 없으면 생성
+os.makedirs(target_dir, exist_ok=True)
+
+# source_dir을 재귀적으로 순회
+for root, dirs, files in os.walk(source_dir):
+    for file in files:
+        # label 디렉토리에 동일한 파일명이 있는지 확인
+        label_path = os.path.join(label_dir, file)
+        if os.path.exists(label_path):
+            source_file = os.path.join(root, file)
+            # 파일 복사 (메타데이터까지 복사하고 싶으면 copy2 사용)
+            shutil.copy2(source_file, target_dir)
+            print(f"Copied: {source_file} -> {target_dir}")

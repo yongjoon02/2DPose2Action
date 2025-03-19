@@ -1,0 +1,58 @@
+[
+    {
+        "frameRange": [
+            0,
+            26
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            26,
+            27
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            27,
+            28
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            28,
+            29
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            29,
+            64
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            64,
+            66
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            66,
+            72
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            72,
+            102
+        ],
+        "activity": "walking"
+    }
+]

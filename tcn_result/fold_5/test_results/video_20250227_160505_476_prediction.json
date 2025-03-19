@@ -1,0 +1,65 @@
+[
+    {
+        "frameRange": [
+            0,
+            3
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            3,
+            4
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            4,
+            8
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            8,
+            9
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            9,
+            25
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            25,
+            32
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            32,
+            92
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            92,
+            96
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            96,
+            102
+        ],
+        "activity": "no_activity"
+    }
+]

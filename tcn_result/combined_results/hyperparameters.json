@@ -1,0 +1,131 @@
+{
+    "training": {
+        "batch_size": 32,
+        "num_epochs": 200,
+        "learning_rate": 0.001,
+        "weight_decay": 0.001,
+        "num_folds": 5,
+        "early_stopping_patience": 20,
+        "optimizer": "AdamW",
+        "scheduler": "CosineAnnealingWarmRestarts",
+        "scheduler_params": {
+            "T_0": 10,
+            "T_mult": 2
+        },
+        "loss_function": "WeightedFocalLoss",
+        "loss_params": {
+            "gamma": 2.0
+        },
+        "augmentation": {
+            "enabled": true,
+            "augment_probability": 0.7,
+            "techniques": [
+                {
+                    "name": "jitter",
+                    "description": "작은 노이즈를 좌표에 추가",
+                    "params": {
+                        "noise_level_range": [0.01, 0.05]
+                    }
+                },
+                {
+                    "name": "scale",
+                    "description": "좌표 크기 무작위 스케일링",
+                    "params": {
+                        "scale_factor_range": [0.8, 1.2]
+                    }
+                },
+                {
+                    "name": "rotate",
+                    "description": "좌표 회전",
+                    "params": {
+                        "angle_range_degrees": [-30, 30]
+                    }
+                },
+                {
+                    "name": "mirror",
+                    "description": "x축 기준 좌표 반전",
+                    "params": {}
+                },
+                {
+                    "name": "time_warp",
+                    "description": "시간 축에 따른 왜곡",
+                    "params": {
+                        "knot": 4,
+                        "sigma": 0.1
+                    }
+                },
+                {
+                    "name": "gaussian_noise",
+                    "description": "가우시안 노이즈 추가",
+                    "params": {
+                        "noise_level_range": [0.01, 0.03]
+                    }
+                },
+                {
+                    "name": "drop_joints",
+                    "description": "일부 관절 정보 드롭아웃",
+                    "params": {
+                        "joint_drop_probability": 0.1
+                    }
+                }
+            ]
+        }
+    },
+    "model": {
+        "type": "TCN",
+        "input_size": 34,
+        "output_size": 5,
+        "hidden_channels": [
+            64,
+            128,
+            256,
+            256,
+            128
+        ],
+        "kernel_size": 5,
+        "dropout": 0.3,
+        "use_se": true
+    },
+    "classes": [
+        "standing",
+        "sitting",
+        "walking",
+        "no_activity",
+        "no_presence"
+    ],
+    "device": "cuda",
+    "seed": 42,
+    "results": {
+        "mean_test_loss": 21.9874549982138,
+        "std_test_loss": 4.77230877959531,
+        "mean_test_accuracy": 71.15927419354838,
+        "std_test_accuracy": 2.9229865645243946,
+        "fold_results": [
+            {
+                "fold": 1,
+                "loss": 19.865106102079153,
+                "accuracy": 72.27328431372548
+            },
+            {
+                "fold": 2,
+                "loss": 24.60563069023192,
+                "accuracy": 66.57179000632512
+            },
+            {
+                "fold": 3,
+                "loss": 29.52075948053971,
+                "accuracy": 69.38646426312461
+            },
+            {
+                "fold": 4,
+                "loss": 15.37180346250534,
+                "accuracy": 72.45414294750158
+            },
+            {
+                "fold": 5,
+                "loss": 20.573975255712867,
+                "accuracy": 75.11068943706515
+            }
+        ]
+    }
+}

@@ -154,12 +154,12 @@ def main():
     model_path = r"yolo.pt"
     
     # 결과 폴더 이름 생성 (이미 존재하는 경우 번호 부여)
-    base_result_folder = r"result"
+    base_result_folder = r"skeleton_result"
     result_folder = get_available_folder(base_result_folder)
     print(f"결과 폴더: {result_folder}")
     
     # data 디렉토리 내 모든 mp4 파일 목록 생성
-    video_files = glob.glob(os.path.join("data", "*.mp4"))
+    video_files = glob.glob(os.path.join("data/2d video", "*.mp4"))
     if not video_files:
         print("No video files found in the 'data' directory.")
         return
@@ -176,7 +176,7 @@ def main():
     print("\nAll videos processed. CSV files saved in the result folder.")
     
     # 생성된 CSV 파일 후처리 수행
-    base_dest_folder = r"result_prepro2"
+    base_dest_folder = r"skeleton_result_prepro"
     dest_folder = get_available_folder(base_dest_folder)
     print(f"\n후처리 시작: CSV 파일 변환 중... (저장 폴더: {dest_folder})")
     process_csv_files(result_folder, dest_folder)
