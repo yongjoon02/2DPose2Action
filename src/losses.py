@@ -8,7 +8,7 @@ class WeightedFocalLoss(nn.Module):
         self.gamma = gamma
         self.reduction = reduction
         # 클래스별 가중치 (standing, sitting, walking, no_activity, no_presence)
-        self.weights = torch.tensor([3.5, 3.0, 1.2, 1.0, 1.5])
+        self.weights = torch.tensor([3.5, 3.5, 1.2, 1.0, 1.5])
         
     def forward(self, inputs, targets):
         ce_loss = F.cross_entropy(inputs, targets, reduction='none')
