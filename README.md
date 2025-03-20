@@ -1,4 +1,4 @@
-# Pose2Action 
+# 2DPose2Action 
 Workflow from 2D human pose estimation to temporal action segmentation
 
 ## Project Structure
