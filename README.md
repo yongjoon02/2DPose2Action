@@ -18,7 +18,7 @@ using pipenv:
 ```
    pipenv install
 ```
-using conda:
+   using conda:
 ```   
    pip install -r requirements.txt
 ```
