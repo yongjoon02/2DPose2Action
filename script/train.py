@@ -422,13 +422,17 @@ def main():
     # 기본 결과 저장 폴더명 설정
     base_folder_name = "tcn_result"
     
+    # 결과 저장을 위한 상위 디렉토리 생성
+    results_parent_dir = "result"
+    os.makedirs(results_parent_dir, exist_ok=True)
+    
     # 이미 폴더가 존재하는지 확인하고, 존재한다면 인덱스를 증가시켜 새 폴더명 생성
     folder_index = 0
-    base_result_dir = base_folder_name
+    base_result_dir = os.path.join(results_parent_dir, base_folder_name)
     
     while os.path.exists(base_result_dir):
         folder_index += 1
-        base_result_dir = f"{base_folder_name}{folder_index}"
+        base_result_dir = os.path.join(results_parent_dir, f"{base_folder_name}{folder_index}")
     
     print(f"결과 저장 폴더: {base_result_dir}")
     os.makedirs(base_result_dir, exist_ok=True)
