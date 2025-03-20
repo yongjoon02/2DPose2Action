@@ -398,6 +398,14 @@ def main():
     
     dataset = SkeletonDataset(csv_dir=csv_dir, json_dir=json_dir, use_augmentation=True)
     
+    # 손실 함수 생성
+    criterion = WeightedFocalLoss(gamma=2.0)
+    # 손실 함수의 가중치를 클래스 이름과 함께 딕셔너리로 변환
+    class_weight_dict = {
+        class_name: float(weight) 
+        for class_name, weight in zip(class_mapping.values(), criterion.weights.cpu().numpy())
+    }
+    
     num_folds = 5
     kfold = StratifiedKFold(n_splits=num_folds, shuffle=True, random_state=42)
     
@@ -462,7 +470,9 @@ def main():
             },
             "loss_function": "WeightedFocalLoss",
             "loss_params": {
-                "gamma": 2.0
+                "gamma": 2.0,
+                "class_weights": class_weight_dict,
+                "weight_description": "클래스 불균형 해소 및 중요 클래스(standing, sitting) 강조를 위한 가중치"
             },
             "augmentation": {
                 "enabled": dataset.use_augmentation,
@@ -650,7 +660,6 @@ def main():
         model = TCN(input_size=input_size, output_size=num_classes, num_channels=hidden_channels,
                     kernel_size=kernel_size, dropout=dropout, use_se=True).to(device)
                     
-        criterion = WeightedFocalLoss(gamma=2.0)
         optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=2)
         
