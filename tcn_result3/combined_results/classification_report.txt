@@ -1,0 +1,11 @@
+              precision    recall  f1-score   support
+
+    standing       0.57      0.29      0.38       509
+     sitting       0.43      0.25      0.32       432
+     walking       0.65      0.60      0.62      3550
+ no_activity       0.77      0.82      0.80      9760
+ no_presence       0.71      0.75      0.73      1661
+
+    accuracy                           0.73     15912
+   macro avg       0.63      0.54      0.57     15912
+weighted avg       0.72      0.73      0.72     15912
