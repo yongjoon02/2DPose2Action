@@ -70,10 +70,18 @@ class SkeletonDataset(Dataset):
         coords = _apply_moving_average(coords, window_size=3)
         coords = _normalize_coords(coords)
         
-        # 증강은 augmentations 모듈에서 가져오기
+        # 현재 파일의 대표 레이블 가져오기
+        main_label = self.file_labels[self.csv_files[idx]]
+        
+        # 증강 적용
         if self.use_augmentation:
-            from src.augmentations import augment_skeleton_data
-            coords = augment_skeleton_data(coords, frames)
+            # standing(0)과 sitting(1) 클래스는 강화된 증강 적용
+            if main_label in [0, 1]:
+                from src.augmentations import augment_skeleton_data_enhanced
+                coords = augment_skeleton_data_enhanced(coords, frames, main_label)
+            else:
+                from src.augmentations import augment_skeleton_data
+                coords = augment_skeleton_data(coords, frames)
         
         coords = torch.tensor(coords, dtype=torch.float32)
         

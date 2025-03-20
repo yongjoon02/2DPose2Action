@@ -23,7 +23,7 @@ from src.models import TCN, SEBlock, TemporalBlock, TemporalConvNet
 from src.losses import WeightedFocalLoss
 from src.datasets import SkeletonDataset, class_mapping, activity_to_label
 # augmentations 모듈 import 추가
-from src.augmentations import augment_skeleton_data
+from src.augmentations import augment_skeleton_data, augment_skeleton_data_enhanced
 
 def set_seed(seed=42):
     """재현성을 위한 시드 설정"""
@@ -487,7 +487,80 @@ def main():
                             "joint_drop_probability": 0.1
                         }
                     }
-                ]
+                ],
+                "enhanced_augmentation": {
+                    "description": "standing(0)과 sitting(1) 클래스를 위한 강화된 증강 기법",
+                    "augment_probability": 0.9,  # 증강 확률 증가
+                    "multiple_augmentations": {
+                        "enabled": True,
+                        "num_augmentations_range": [2, 4]  # 여러 증강 기법 중첩 적용
+                    },
+                    "enhanced_techniques": [
+                        {
+                            "name": "jitter",
+                            "description": "더 강한 노이즈 추가",
+                            "params": {
+                                "noise_level_range": [0.02, 0.07]
+                            }
+                        },
+                        {
+                            "name": "scale",
+                            "description": "더 넓은 범위의 스케일링",
+                            "params": {
+                                "scale_factor_range": [0.7, 1.3]
+                            }
+                        },
+                        {
+                            "name": "enhanced_scale",
+                            "description": "x, y 축 독립적 스케일링",
+                            "params": {
+                                "scale_x_range": [0.7, 1.3],
+                                "scale_y_range": [0.7, 1.3]
+                            }
+                        },
+                        {
+                            "name": "rotate",
+                            "description": "더 넓은 범위의 회전",
+                            "params": {
+                                "angle_range_degrees": [-45, 45]
+                            }
+                        },
+                        {
+                            "name": "enhanced_rotate",
+                            "description": "상체/하체 독립적 회전",
+                            "params": {
+                                "upper_angle_range_degrees": [-50, 50],
+                                "lower_angle_range_degrees": [-30, 30]
+                            }
+                        },
+                        {
+                            "name": "time_warp",
+                            "description": "더 강한 시간 왜곡",
+                            "params": {
+                                "knot": 6,
+                                "sigma": 0.15,
+                                "min_warper": 0.4
+                            }
+                        },
+                        {
+                            "name": "gaussian_noise",
+                            "description": "더 강한 가우시안 노이즈",
+                            "params": {
+                                "noise_level_range": [0.02, 0.06]
+                            }
+                        },
+                        {
+                            "name": "drop_joints",
+                            "description": "더 높은 확률의 관절 드롭아웃 및 시간적 드롭아웃",
+                            "params": {
+                                "joint_drop_probability": 0.15,
+                                "time_drop_probability": 0.05
+                            }
+                        }
+                    ],
+                    "target_classes": [0, 1],  # standing(0), sitting(1)
+                    "class_names": ["standing", "sitting"]
+                }
             }
         },
         "model": {

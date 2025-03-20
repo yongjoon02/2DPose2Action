@@ -1,0 +1,16 @@
+[
+    {
+        "frameRange": [
+            10,
+            22
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            22,
+            102
+        ],
+        "activity": "walking"
+    }
+]

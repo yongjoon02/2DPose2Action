@@ -1,0 +1,153 @@
+{
+    "training": {
+        "batch_size": 32,
+        "num_epochs": 200,
+        "learning_rate": 0.001,
+        "weight_decay": 0.001,
+        "num_folds": 5,
+        "early_stopping_patience": 20,
+        "optimizer": "AdamW",
+        "scheduler": "CosineAnnealingWarmRestarts",
+        "scheduler_params": {
+            "T_0": 10,
+            "T_mult": 2
+        },
+        "loss_function": "WeightedFocalLoss",
+        "loss_params": {
+            "gamma": 2.0
+        },
+        "augmentation": {
+            "enabled": true,
+            "augment_probability": 0.7,
+            "techniques": [
+                {
+                    "name": "jitter",
+                    "description": "\uc791\uc740 \ub178\uc774\uc988\ub97c \uc88c\ud45c\uc5d0 \ucd94\uac00",
+                    "params": {
+                        "noise_level_range": [
+                            0.01,
+                            0.05
+                        ]
+                    }
+                },
+                {
+                    "name": "scale",
+                    "description": "\uc88c\ud45c \ud06c\uae30 \ubb34\uc791\uc704 \uc2a4\ucf00\uc77c\ub9c1",
+                    "params": {
+                        "scale_factor_range": [
+                            0.8,
+                            1.2
+                        ]
+                    }
+                },
+                {
+                    "name": "rotate",
+                    "description": "\uc88c\ud45c \ud68c\uc804",
+                    "params": {
+                        "angle_range_degrees": [
+                            -30,
+                            30
+                        ]
+                    }
+                },
+                {
+                    "name": "mirror",
+                    "description": "x\ucd95 \uae30\uc900 \uc88c\ud45c \ubc18\uc804",
+                    "params": {}
+                },
+                {
+                    "name": "time_warp",
+                    "description": "\uc2dc\uac04 \ucd95\uc5d0 \ub530\ub978 \uc65c\uace1",
+                    "params": {
+                        "knot": 4,
+                        "sigma": 0.1
+                    }
+                },
+                {
+                    "name": "gaussian_noise",
+                    "description": "\uac00\uc6b0\uc2dc\uc548 \ub178\uc774\uc988 \ucd94\uac00",
+                    "params": {
+                        "noise_level_range": [
+                            0.01,
+                            0.03
+                        ]
+                    }
+                },
+                {
+                    "name": "drop_joints",
+                    "description": "\uc77c\ubd80 \uad00\uc808 \uc815\ubcf4 \ub4dc\ub86d\uc544\uc6c3",
+                    "params": {
+                        "joint_drop_probability": 0.1
+                    }
+                },
+                {
+                    "name": "standing",
+                    "description": "standing \ud074\ub798\uc2a4\ub97c \uc704\ud55c \uac15\ud654\ub41c \uc99d\uac15 \uc815\ubcf4",
+                    "params": {}
+                },
+                {
+                    "name": "sitting",
+                    "description": "sitting \ud074\ub798\uc2a4\ub97c \uc704\ud55c \uac15\ud654\ub41c \uc99d\uac15 \uc815\ubcf4",
+                    "params": {}
+                }
+            ]
+        }
+    },
+    "model": {
+        "type": "TCN",
+        "input_size": 34,
+        "output_size": 5,
+        "hidden_channels": [
+            64,
+            128,
+            256,
+            256,
+            128
+        ],
+        "kernel_size": 5,
+        "dropout": 0.3,
+        "use_se": true
+    },
+    "classes": [
+        "standing",
+        "sitting",
+        "walking",
+        "no_activity",
+        "no_presence"
+    ],
+    "device": "cuda",
+    "seed": 42,
+    "results": {
+        "mean_test_loss": 18.031619272730314,
+        "std_test_loss": 7.094700701080117,
+        "mean_test_accuracy": 71.60835705249842,
+        "std_test_accuracy": 4.22591245532437,
+        "fold_results": [
+            {
+                "fold": 1,
+                "loss": 15.995271926745772,
+                "accuracy": 73.25367647058823
+            },
+            {
+                "fold": 2,
+                "loss": 30.487567083793692,
+                "accuracy": 67.9000632511069
+            },
+            {
+                "fold": 3,
+                "loss": 20.5898512955755,
+                "accuracy": 66.57179000632512
+            },
+            {
+                "fold": 4,
+                "loss": 10.642723951488733,
+                "accuracy": 78.49462365591398
+            },
+            {
+                "fold": 5,
+                "loss": 12.442682106047869,
+                "accuracy": 71.82163187855788
+            }
+        ]
+    }
+}
