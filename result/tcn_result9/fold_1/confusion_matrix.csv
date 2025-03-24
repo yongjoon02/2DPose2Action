@@ -1,0 +1,6 @@
+,standing,sitting,walking,no_activity,no_presence
+standing,129,20,20,55,0
+sitting,1,186,4,51,0
+walking,0,0,1531,99,21
+no_activity,64,24,179,1873,13
+no_presence,1,0,40,1,992

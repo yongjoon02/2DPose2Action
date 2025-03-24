@@ -1,0 +1,13 @@
+Combined Classification Report
+
+Class           Precision    Recall       F1-score     Support     
+------------------------------------------------------------
+standing        0.6146       0.5602       0.5861       723         
+sitting         0.6481       0.6531       0.6506       640         
+walking         0.8386       0.9095       0.8727       4886        
+no_activity     0.9009       0.8532       0.8764       6723        
+no_presence     0.9619       0.9626       0.9623       2940        
+
+Accuracy: 0.8693
+Macro Avg: 0.7928    0.7877    0.7896    15912
+Weighted Avg: 0.8699    0.8693    0.8688    15912

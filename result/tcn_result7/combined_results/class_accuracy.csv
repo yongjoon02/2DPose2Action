@@ -1,0 +1,6 @@
+class,mean_accuracy,std_accuracy
+standing,44.05%,4.50%
+sitting,42.72%,15.04%
+walking,74.83%,0.85%
+no_activity,78.55%,3.12%
+no_presence,76.76%,6.60%

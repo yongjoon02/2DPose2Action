@@ -1,0 +1,518 @@
+{
+    "predictions": [
+        {
+            "frame": 0,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 1,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 2,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 3,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 4,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 5,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 6,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 7,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 8,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 9,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 10,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 11,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 12,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 13,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 14,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 15,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 16,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 17,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 18,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 19,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 20,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 21,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 22,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 23,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 24,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 25,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 26,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 27,
+            "predicted_class": "no_activity",
+            "class_index": 3
+        },
+        {
+            "frame": 28,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 29,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 30,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 31,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 32,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 33,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 34,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 35,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 36,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 37,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 38,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 39,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 40,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 41,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 42,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 43,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 44,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 45,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 46,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 47,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 48,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 49,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 50,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 51,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 52,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 53,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 54,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 55,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 56,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 57,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 58,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 59,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 60,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 61,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 62,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 63,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 64,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 65,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 66,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 67,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 68,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 69,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 70,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 71,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 72,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 73,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 74,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 75,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 76,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 77,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 78,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 79,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 80,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 81,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 82,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 83,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 84,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 85,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 86,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 87,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 88,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 89,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 90,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 91,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 92,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 93,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 94,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 95,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 96,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 97,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 98,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 99,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 100,
+            "predicted_class": "walking",
+            "class_index": 2
+        },
+        {
+            "frame": 101,
+            "predicted_class": "walking",
+            "class_index": 2
+        }
+    ],
+    "metadata": {
+        "model_type": "TCN",
+        "timestamp": "2025-03-24 23:44:32"
+    }
+}
