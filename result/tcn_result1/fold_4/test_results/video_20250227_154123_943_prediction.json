@@ -9,13 +9,13 @@
     {
         "frameRange": [
             1,
-            99
+            81
         ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            99,
+            81,
             102
         ],
         "activity": "walking"

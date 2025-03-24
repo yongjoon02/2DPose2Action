@@ -2,41 +2,6 @@
     {
         "frameRange": [
             0,
-            51
-        ],
-        "activity": "no_activity"
-    },
-    {
-        "frameRange": [
-            51,
-            52
-        ],
-        "activity": "no_presence"
-    },
-    {
-        "frameRange": [
-            52,
-            55
-        ],
-        "activity": "no_activity"
-    },
-    {
-        "frameRange": [
-            55,
-            74
-        ],
-        "activity": "no_presence"
-    },
-    {
-        "frameRange": [
-            74,
-            75
-        ],
-        "activity": "no_activity"
-    },
-    {
-        "frameRange": [
-            75,
             76
         ],
         "activity": "no_presence"
@@ -44,48 +9,13 @@
     {
         "frameRange": [
             76,
-            81
-        ],
-        "activity": "no_activity"
-    },
-    {
-        "frameRange": [
-            81,
-            83
+            84
         ],
         "activity": "walking"
     },
     {
         "frameRange": [
-            83,
-            88
-        ],
-        "activity": "no_presence"
-    },
-    {
-        "frameRange": [
-            88,
-            91
-        ],
-        "activity": "no_activity"
-    },
-    {
-        "frameRange": [
-            91,
-            97
-        ],
-        "activity": "no_presence"
-    },
-    {
-        "frameRange": [
-            97,
-            101
-        ],
-        "activity": "no_activity"
-    },
-    {
-        "frameRange": [
-            101,
+            84,
             102
         ],
         "activity": "no_presence"

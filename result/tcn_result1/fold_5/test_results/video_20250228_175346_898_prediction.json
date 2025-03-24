@@ -2,29 +2,50 @@
     {
         "frameRange": [
             0,
-            45
+            49
         ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            45,
-            67
+            49,
+            50
         ],
         "activity": "standing"
     },
     {
         "frameRange": [
-            67,
-            92
+            50,
+            51
         ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            92,
+            51,
+            53
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            53,
+            61
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            61,
+            64
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            64,
             102
         ],
-        "activity": "sitting"
+        "activity": "no_activity"
     }
 ]

@@ -2,62 +2,97 @@
     {
         "frameRange": [
             0,
-            30
+            1
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            1,
+            15
         ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            30,
+            15,
+            25
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            25,
+            37
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            37,
+            38
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            38,
             44
         ],
-        "activity": "standing"
+        "activity": "no_activity"
     },
     {
         "frameRange": [
             44,
-            45
+            48
         ],
         "activity": "walking"
     },
     {
         "frameRange": [
-            45,
-            51
-        ],
-        "activity": "standing"
-    },
-    {
-        "frameRange": [
-            51,
-            53
-        ],
-        "activity": "walking"
-    },
-    {
-        "frameRange": [
-            53,
-            56
+            48,
+            49
         ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            56,
-            58
-        ],
-        "activity": "walking"
-    },
-    {
-        "frameRange": [
-            58,
-            59
+            49,
+            50
         ],
         "activity": "standing"
     },
     {
         "frameRange": [
-            59,
+            50,
+            54
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            54,
+            77
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            77,
+            78
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            78,
+            79
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            79,
             102
         ],
         "activity": "walking"

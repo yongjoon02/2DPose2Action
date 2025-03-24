@@ -2,20 +2,27 @@
     {
         "frameRange": [
             0,
-            15
-        ],
-        "activity": "no_activity"
-    },
-    {
-        "frameRange": [
-            15,
-            68
+            1
         ],
         "activity": "walking"
     },
     {
         "frameRange": [
-            68,
+            1,
+            9
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            9,
+            70
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            70,
             102
         ],
         "activity": "no_activity"

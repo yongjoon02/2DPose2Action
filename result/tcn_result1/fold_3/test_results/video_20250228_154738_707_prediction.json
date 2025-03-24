@@ -4,14 +4,14 @@
             0,
             1
         ],
-        "activity": "sitting"
+        "activity": "walking"
     },
     {
         "frameRange": [
             1,
             16
         ],
-        "activity": "walking"
+        "activity": "no_activity"
     },
     {
         "frameRange": [
@@ -25,11 +25,18 @@
             17,
             18
         ],
-        "activity": "walking"
+        "activity": "no_activity"
     },
     {
         "frameRange": [
             18,
+            19
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            19,
             32
         ],
         "activity": "no_activity"
@@ -37,6 +44,20 @@
     {
         "frameRange": [
             32,
+            33
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            33,
+            34
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            34,
             35
         ],
         "activity": "walking"
@@ -46,18 +67,11 @@
             35,
             36
         ],
-        "activity": "standing"
-    },
-    {
-        "frameRange": [
-            36,
-            39
-        ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            39,
+            36,
             40
         ],
         "activity": "standing"
@@ -65,20 +79,34 @@
     {
         "frameRange": [
             40,
-            91
+            43
         ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            91,
-            96
+            43,
+            44
         ],
         "activity": "standing"
     },
     {
         "frameRange": [
-            96,
+            44,
+            86
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            86,
+            90
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            90,
             101
         ],
         "activity": "no_activity"
@@ -88,6 +116,6 @@
             101,
             102
         ],
-        "activity": "sitting"
+        "activity": "walking"
     }
 ]

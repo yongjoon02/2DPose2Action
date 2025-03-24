@@ -2,20 +2,20 @@
     {
         "frameRange": [
             0,
-            3
+            2
         ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            3,
-            63
+            2,
+            64
         ],
         "activity": "walking"
     },
     {
         "frameRange": [
-            63,
+            64,
             102
         ],
         "activity": "no_activity"

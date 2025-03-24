@@ -14,7 +14,15 @@
         },
         "loss_function": "WeightedFocalLoss",
         "loss_params": {
-            "gamma": 2.0
+            "gamma": 2.0,
+            "class_weights": {
+                "standing": 3.5,
+                "sitting": 3.5,
+                "walking": 1.2,
+                "no_activity": 0.7,
+                "no_presence": 1.5
+            },
+            "weight_description": "\ud074\ub798\uc2a4 \ubd88\uade0\ud615 \ud574\uc18c \ubc0f \uc911\uc694 \ud074\ub798\uc2a4(standing, sitting) \uac15\uc870\ub97c \uc704\ud55c \uac00\uc911\uce58, no_activity \ud074\ub798\uc2a4 \uac00\uc911\uce58 \uac10\uc18c"
         },
         "augmentation": {
             "enabled": true,
@@ -203,6 +211,11 @@
         "kernel_size": 5,
         "dropout": 0.3,
         "use_se": true,
+        "activation": "ReLU",
+        "thresholds": {
+            "no_activity_threshold": 0.98,
+            "temporal_window": 7
+        },
         "transition_rules": {
             "enabled": true,
             "description": "FSM\uacfc \ud655\ub960 \uae30\ubc18 \uc811\uadfc\ubc95\uc744 \uacb0\ud569\ud55c \uc804\uc774 \uaddc\uce59",
@@ -220,6 +233,43 @@
                     "to_idx": 0
                 }
             ],
+            "transition_matrix": [
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                [
+                    1,
+                    1,
+                    0,
+                    1,
+                    1
+                ],
+                [
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ]
+            ],
             "method": "FSM with probability-based selection"
         }
     },
@@ -230,38 +280,52 @@
         "no_activity",
         "no_presence"
     ],
-    "device": "cuda",
+    "device": "cpu",
     "seed": 42,
+    "environment": {
+        "timestamp": "2025-03-24 11:04:39",
+        "python_version": "3.10.0 (tags/v3.10.0:b494f59, Oct  4 2021, 19:00:18) [MSC v.1929 64 bit (AMD64)]",
+        "pytorch_version": "1.12.1+cu113",
+        "numpy_version": "1.26.4",
+        "code_archived": true,
+        "archived_files": [
+            "train.py",
+            "models.py",
+            "datasets.py",
+            "losses.py",
+            "augmentations.py"
+        ]
+    },
     "results": {
-        "mean_test_loss": 18.031619272730314,
-        "std_test_loss": 7.094700701080117,
-        "mean_test_accuracy": 71.66469006957622,
-        "std_test_accuracy": 4.249323639185908,
+        "mean_test_loss": 13.70736510977149,
+        "std_test_loss": 4.77526993068424,
+        "mean_test_accuracy": 85.81119544592032,
+        "std_test_accuracy": 1.2243174491057276,
         "fold_results": [
             {
                 "fold": 1,
-                "loss": 15.995271926745772,
-                "accuracy": 73.34558823529412
+                "loss": 17.382808721624315,
+                "accuracy": 85.53921568627452
             },
             {
                 "fold": 2,
-                "loss": 30.487567083793692,
-                "accuracy": 67.9000632511069
+                "loss": 21.01847004983574,
+                "accuracy": 83.58633776091082
             },
             {
                 "fold": 3,
-                "loss": 20.5898512955755,
-                "accuracy": 66.63504111321949
+                "loss": 12.159718753769994,
+                "accuracy": 86.62239089184061
             },
             {
                 "fold": 4,
-                "loss": 10.642723951488733,
-                "accuracy": 78.58950031625554
+                "loss": 8.749978316016495,
+                "accuracy": 87.09677419354838
             },
             {
                 "fold": 5,
-                "loss": 12.442682106047869,
-                "accuracy": 71.85325743200507
+                "loss": 9.225849707610905,
+                "accuracy": 86.2112586970272
             }
         ]
     }

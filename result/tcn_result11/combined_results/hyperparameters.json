@@ -1,0 +1,332 @@
+{
+    "training": {
+        "batch_size": 32,
+        "num_epochs": 200,
+        "learning_rate": 0.001,
+        "weight_decay": 0.001,
+        "num_folds": 5,
+        "early_stopping_patience": 20,
+        "optimizer": "AdamW",
+        "scheduler": "CosineAnnealingWarmRestarts",
+        "scheduler_params": {
+            "T_0": 10,
+            "T_mult": 2
+        },
+        "loss_function": "WeightedFocalLoss",
+        "loss_params": {
+            "gamma": 2.0,
+            "class_weights": {
+                "standing": 3.5,
+                "sitting": 3.5,
+                "walking": 1.2,
+                "no_activity": 0.7,
+                "no_presence": 1.5
+            },
+            "weight_description": "\ud074\ub798\uc2a4 \ubd88\uade0\ud615 \ud574\uc18c \ubc0f \uc911\uc694 \ud074\ub798\uc2a4(standing, sitting) \uac15\uc870\ub97c \uc704\ud55c \uac00\uc911\uce58, no_activity \ud074\ub798\uc2a4 \uac00\uc911\uce58 \uac10\uc18c"
+        },
+        "augmentation": {
+            "enabled": true,
+            "augment_probability": 0.7,
+            "techniques": [
+                {
+                    "name": "jitter",
+                    "description": "\uc791\uc740 \ub178\uc774\uc988\ub97c \uc88c\ud45c\uc5d0 \ucd94\uac00",
+                    "params": {
+                        "noise_level_range": [
+                            0.01,
+                            0.05
+                        ]
+                    }
+                },
+                {
+                    "name": "scale",
+                    "description": "\uc88c\ud45c \ud06c\uae30 \ubb34\uc791\uc704 \uc2a4\ucf00\uc77c\ub9c1",
+                    "params": {
+                        "scale_factor_range": [
+                            0.8,
+                            1.2
+                        ]
+                    }
+                },
+                {
+                    "name": "rotate",
+                    "description": "\uc88c\ud45c \ud68c\uc804",
+                    "params": {
+                        "angle_range_degrees": [
+                            -30,
+                            30
+                        ]
+                    }
+                },
+                {
+                    "name": "mirror",
+                    "description": "x\ucd95 \uae30\uc900 \uc88c\ud45c \ubc18\uc804",
+                    "params": {}
+                },
+                {
+                    "name": "time_warp",
+                    "description": "\uc2dc\uac04 \ucd95\uc5d0 \ub530\ub978 \uc65c\uace1",
+                    "params": {
+                        "knot": 4,
+                        "sigma": 0.1
+                    }
+                },
+                {
+                    "name": "gaussian_noise",
+                    "description": "\uac00\uc6b0\uc2dc\uc548 \ub178\uc774\uc988 \ucd94\uac00",
+                    "params": {
+                        "noise_level_range": [
+                            0.01,
+                            0.03
+                        ]
+                    }
+                },
+                {
+                    "name": "drop_joints",
+                    "description": "\uc77c\ubd80 \uad00\uc808 \uc815\ubcf4 \ub4dc\ub86d\uc544\uc6c3",
+                    "params": {
+                        "joint_drop_probability": 0.1
+                    }
+                }
+            ],
+            "enhanced_augmentation": {
+                "description": "standing(0)\uacfc sitting(1) \ud074\ub798\uc2a4\ub97c \uc704\ud55c \uac15\ud654\ub41c \uc99d\uac15 \uae30\ubc95",
+                "augment_probability": 0.9,
+                "multiple_augmentations": {
+                    "enabled": true,
+                    "num_augmentations_range": [
+                        2,
+                        4
+                    ]
+                },
+                "enhanced_techniques": [
+                    {
+                        "name": "jitter",
+                        "description": "\ub354 \uac15\ud55c \ub178\uc774\uc988 \ucd94\uac00",
+                        "params": {
+                            "noise_level_range": [
+                                0.02,
+                                0.07
+                            ]
+                        }
+                    },
+                    {
+                        "name": "scale",
+                        "description": "\ub354 \ub113\uc740 \ubc94\uc704\uc758 \uc2a4\ucf00\uc77c\ub9c1",
+                        "params": {
+                            "scale_factor_range": [
+                                0.7,
+                                1.3
+                            ]
+                        }
+                    },
+                    {
+                        "name": "enhanced_scale",
+                        "description": "x, y \ucd95 \ub3c5\ub9bd\uc801 \uc2a4\ucf00\uc77c\ub9c1",
+                        "params": {
+                            "scale_x_range": [
+                                0.7,
+                                1.3
+                            ],
+                            "scale_y_range": [
+                                0.7,
+                                1.3
+                            ]
+                        }
+                    },
+                    {
+                        "name": "rotate",
+                        "description": "\ub354 \ub113\uc740 \ubc94\uc704\uc758 \ud68c\uc804",
+                        "params": {
+                            "angle_range_degrees": [
+                                -45,
+                                45
+                            ]
+                        }
+                    },
+                    {
+                        "name": "enhanced_rotate",
+                        "description": "\uc0c1\uccb4/\ud558\uccb4 \ub3c5\ub9bd\uc801 \ud68c\uc804",
+                        "params": {
+                            "upper_angle_range_degrees": [
+                                -50,
+                                50
+                            ],
+                            "lower_angle_range_degrees": [
+                                -30,
+                                30
+                            ]
+                        }
+                    },
+                    {
+                        "name": "time_warp",
+                        "description": "\ub354 \uac15\ud55c \uc2dc\uac04 \uc65c\uace1",
+                        "params": {
+                            "knot": 6,
+                            "sigma": 0.15,
+                            "min_warper": 0.4
+                        }
+                    },
+                    {
+                        "name": "gaussian_noise",
+                        "description": "\ub354 \uac15\ud55c \uac00\uc6b0\uc2dc\uc548 \ub178\uc774\uc988",
+                        "params": {
+                            "noise_level_range": [
+                                0.02,
+                                0.06
+                            ]
+                        }
+                    },
+                    {
+                        "name": "drop_joints",
+                        "description": "\ub354 \ub192\uc740 \ud655\ub960\uc758 \uad00\uc808 \ub4dc\ub86d\uc544\uc6c3 \ubc0f \uc2dc\uac04\uc801 \ub4dc\ub86d\uc544\uc6c3",
+                        "params": {
+                            "joint_drop_probability": 0.15,
+                            "time_drop_probability": 0.05
+                        }
+                    }
+                ],
+                "target_classes": [
+                    0,
+                    1
+                ],
+                "class_names": [
+                    "standing",
+                    "sitting"
+                ]
+            }
+        }
+    },
+    "model": {
+        "type": "TCN",
+        "input_size": 34,
+        "output_size": 5,
+        "hidden_channels": [
+            64,
+            128,
+            256,
+            256,
+            128
+        ],
+        "kernel_size": 5,
+        "dropout": 0.3,
+        "use_se": true,
+        "activation": "ReLU",
+        "thresholds": {
+            "no_activity_threshold": 0.99,
+            "temporal_window": 7
+        },
+        "transition_rules": {
+            "enabled": true,
+            "description": "FSM\uacfc \ud655\ub960 \uae30\ubc18 \uc811\uadfc\ubc95\uc744 \uacb0\ud569\ud55c \uc804\uc774 \uaddc\uce59",
+            "forbidden_transitions": [
+                {
+                    "from": "sitting",
+                    "to": "walking",
+                    "from_idx": 1,
+                    "to_idx": 2
+                },
+                {
+                    "from": "walking",
+                    "to": "standing",
+                    "from_idx": 2,
+                    "to_idx": 0
+                }
+            ],
+            "transition_matrix": [
+                [
+                    1,
+                    1,
+                    1,
+                    0.4,
+                    1
+                ],
+                [
+                    1,
+                    1,
+                    0,
+                    0.4,
+                    1
+                ],
+                [
+                    0,
+                    1,
+                    1,
+                    0.4,
+                    1
+                ],
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            "method": "FSM with probability-based selection"
+        }
+    },
+    "classes": [
+        "standing",
+        "sitting",
+        "walking",
+        "no_activity",
+        "no_presence"
+    ],
+    "device": "cpu",
+    "seed": 42,
+    "environment": {
+        "timestamp": "2025-03-24 09:19:42",
+        "python_version": "3.10.0 (tags/v3.10.0:b494f59, Oct  4 2021, 19:00:18) [MSC v.1929 64 bit (AMD64)]",
+        "pytorch_version": "1.12.1+cu113",
+        "numpy_version": "1.26.4",
+        "code_archived": true,
+        "archived_files": [
+            "train.py",
+            "models.py",
+            "datasets.py",
+            "losses.py",
+            "augmentations.py"
+        ]
+    },
+    "results": {
+        "mean_test_loss": 13.70736510977149,
+        "std_test_loss": 4.77526993068424,
+        "mean_test_accuracy": 85.81119544592032,
+        "std_test_accuracy": 1.2243174491057276,
+        "fold_results": [
+            {
+                "fold": 1,
+                "loss": 17.382808721624315,
+                "accuracy": 85.53921568627452
+            },
+            {
+                "fold": 2,
+                "loss": 21.01847004983574,
+                "accuracy": 83.58633776091082
+            },
+            {
+                "fold": 3,
+                "loss": 12.159718753769994,
+                "accuracy": 86.62239089184061
+            },
+            {
+                "fold": 4,
+                "loss": 8.749978316016495,
+                "accuracy": 87.09677419354838
+            },
+            {
+                "fold": 5,
+                "loss": 9.225849707610905,
+                "accuracy": 86.2112586970272
+            }
+        ]
+    }
+}

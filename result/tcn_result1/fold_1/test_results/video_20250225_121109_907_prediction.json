@@ -2,62 +2,48 @@
     {
         "frameRange": [
             0,
-            15
+            3
         ],
         "activity": "no_activity"
     },
     {
         "frameRange": [
-            15,
-            16
+            3,
+            4
         ],
         "activity": "sitting"
     },
     {
         "frameRange": [
-            16,
-            17
+            4,
+            6
         ],
-        "activity": "walking"
+        "activity": "no_activity"
     },
     {
         "frameRange": [
-            17,
-            20
+            6,
+            8
         ],
         "activity": "sitting"
     },
     {
         "frameRange": [
-            20,
-            54
+            8,
+            9
         ],
-        "activity": "no_activity"
+        "activity": "standing"
     },
     {
         "frameRange": [
-            54,
-            63
+            9,
+            74
         ],
-        "activity": "walking"
+        "activity": "sitting"
     },
     {
         "frameRange": [
-            63,
-            64
-        ],
-        "activity": "no_activity"
-    },
-    {
-        "frameRange": [
-            64,
-            65
-        ],
-        "activity": "walking"
-    },
-    {
-        "frameRange": [
-            65,
+            74,
             102
         ],
         "activity": "no_activity"
