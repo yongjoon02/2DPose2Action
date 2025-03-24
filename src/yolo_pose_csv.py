@@ -25,7 +25,7 @@ def process_video(video_path, model_path, device, result_folder):
     # YOLO 모델 로드 및 설정
     model = YOLO(model_path)
     model = model.to(device)
-    model.conf = 0.2
+    model.conf = 0.5
     model.imgsz = (960, 960)
     
     all_keypoints = []
