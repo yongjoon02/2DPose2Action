@@ -1,0 +1,72 @@
+[
+    {
+        "frameRange": [
+            0,
+            54
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            54,
+            56
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            56,
+            61
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            61,
+            66
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            66,
+            70
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            70,
+            71
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            71,
+            72
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            72,
+            78
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            78,
+            93
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            93,
+            102
+        ],
+        "activity": "no_activity"
+    }
+]

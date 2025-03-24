@@ -1,0 +1,44 @@
+[
+    {
+        "frameRange": [
+            0,
+            46
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            46,
+            47
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            47,
+            48
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            48,
+            49
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            49,
+            54
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            54,
+            102
+        ],
+        "activity": "no_activity"
+    }
+]

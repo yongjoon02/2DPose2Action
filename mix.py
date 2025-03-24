@@ -81,13 +81,13 @@ for filename in os.listdir(directory):
             else:
                 print(f"Pattern not matched: {filename}")"""
 
-"""import os
+import os
 import glob
 import json
 
 # 입력 및 출력 디렉토리 설정
-input_dir = r'F:\label_didimdol'
-output_dir = r'F:\label_didimdol_prepro'
+input_dir = r'F:\yolo\data\json'
+output_dir = r'F:\yolo\data\json2'
 
 # 출력 디렉토리가 없으면 생성
 if not os.path.exists(output_dir):
@@ -99,13 +99,35 @@ for file_path in glob.glob(os.path.join(input_dir, '*.json')):
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     
-    # tags 배열에서 frameRange와 name(=activity) 추출
+    # 변환된 데이터를 저장할 리스트
     transformed_data = []
-    for tag in data.get("tags", []):
-        transformed_data.append({
-            "frameRange": tag.get("frameRange"),
-            "activity": tag.get("name")
-        })
+    
+    # 데이터 구조 확인 및 처리
+    if isinstance(data, list):
+        # 데이터가 이미 리스트 형태인 경우
+        for item in data:
+            # 데이터의 구조에 따라 적절히 변환
+            if isinstance(item, dict):
+                if "frameRange" in item and "name" in item:
+                    transformed_data.append({
+                        "frameRange": item.get("frameRange"),
+                        "activity": item.get("name")
+                    })
+                elif "frameRange" in item and "activity" in item:
+                    transformed_data.append({
+                        "frameRange": item.get("frameRange"),
+                        "activity": item.get("activity")
+                    })
+    elif isinstance(data, dict):
+        # 데이터가 딕셔너리 형태인 경우
+        if "tags" in data and isinstance(data["tags"], list):
+            # tags 배열에서 frameRange와 name(=activity) 추출
+            for tag in data["tags"]:
+                if isinstance(tag, dict):
+                    transformed_data.append({
+                        "frameRange": tag.get("frameRange"),
+                        "activity": tag.get("name")
+                    })
     
     # 원본 파일명 유지하여 출력 파일 경로 생성
     file_name = os.path.basename(file_path)
@@ -115,9 +137,9 @@ for file_path in glob.glob(os.path.join(input_dir, '*.json')):
     with open(output_file_path, 'w', encoding='utf-8') as f:
         json.dump(transformed_data, f, ensure_ascii=False, indent=4)
     
-    print(f"Processed {file_path} -> {output_file_path}")
+    print(f"처리 완료: {file_path} -> {output_file_path}")
 
-print("JSON 변환 완료!")"""
+print("JSON 변환 완료!")
 
 
 
@@ -158,7 +180,7 @@ for filename in os.listdir(src_folder):
         result.to_csv(save_path, index=False)
         print("저장 완료:", save_path)"""
 
-import os
+"""import os
 import shutil
 
 # 경로 설정 (역슬래시 앞에 r을 붙여 raw string으로 사용)
@@ -178,4 +200,117 @@ for root, dirs, files in os.walk(source_dir):
             source_file = os.path.join(root, file)
             # 파일 복사 (메타데이터까지 복사하고 싶으면 copy2 사용)
             shutil.copy2(source_file, target_dir)
-            print(f"Copied: {source_file} -> {target_dir}")
+            print(f"Copied: {source_file} -> {target_dir}")"""
+"""import os
+import shutil
+
+# 삭제 기준이 되는 파일들이 들어 있는 디렉토리
+csv_dir = r"F:\yolo\data\csv"
+
+# 순회하며 삭제할 대상 디렉토리
+video_dir = r"F:\didimdol_videos0"
+
+# 백업 디렉토리 (선택적)
+backup_dir = r"F:\backup_before_delete"
+
+def main():
+    # csv_dir 내 파일명(확장자 제외)을 모두 읽어 집합(set)에 저장
+    csv_filenames = {os.path.splitext(filename)[0].lower() for filename in os.listdir(csv_dir)}
+    
+    # 삭제 전 확인
+    total_files = 0
+    files_to_delete = []
+    
+    for root, dirs, files in os.walk(video_dir):
+        for filename in files:
+            base_name = os.path.splitext(filename)[0].lower()
+            if base_name in csv_filenames:
+                file_path = os.path.join(root, filename)
+                files_to_delete.append(file_path)
+                total_files += 1
+    
+    if total_files > 0:
+        print(f"총 {total_files}개의 파일이 삭제 대상입니다.")
+        confirm = input("정말로 삭제하시겠습니까? (y/n): ")
+        
+        if confirm.lower() == 'y':
+            # 백업 디렉토리 생성 (선택적)
+            os.makedirs(backup_dir, exist_ok=True)
+            
+            for file_path in files_to_delete:
+                try:
+                    # 백업 (선택적)
+                    backup_path = os.path.join(backup_dir, os.path.basename(file_path))
+                    shutil.copy2(file_path, backup_path)
+                    
+                    # 삭제
+                    os.remove(file_path)
+                    print(f"삭제 완료: {file_path}")
+                except Exception as e:
+                    print(f"삭제 실패 {file_path}: {e}")
+        else:
+            print("삭제 작업이 취소되었습니다.")
+    else:
+        print("삭제할 파일이 없습니다.")
+
+if __name__ == "__main__":
+    main()"""
+
+"""import os
+import shutil
+
+# 대상 디렉토리
+main_dir = r"F:\didimdol_videos0"
+
+def extract_files_and_remove_folders():
+    # 메인 디렉토리의 모든 항목을 순회
+    for item in os.listdir(main_dir):
+        item_path = os.path.join(main_dir, item)
+        
+        # 디렉토리인 경우만 처리
+        if os.path.isdir(item_path):
+            print(f"폴더 처리 중: {item}")
+            
+            # 폴더 내의 모든 파일 이동
+            for file in os.listdir(item_path):
+                file_path = os.path.join(item_path, file)
+                
+                # 파일인 경우만 이동
+                if os.path.isfile(file_path):
+                    # 대상 경로에 같은 이름의 파일이 있는지 확인
+                    dest_path = os.path.join(main_dir, file)
+                    
+                    if os.path.exists(dest_path):
+                        # 중복 파일 처리 (이름 변경)
+                        base, ext = os.path.splitext(file)
+                        counter = 1
+                        while os.path.exists(dest_path):
+                            new_name = f"{base}_{counter}{ext}"
+                            dest_path = os.path.join(main_dir, new_name)
+                            counter += 1
+                    
+                    # 파일 이동
+                    try:
+                        shutil.move(file_path, dest_path)
+                        print(f"  파일 이동: {file} -> {os.path.basename(dest_path)}")
+                    except Exception as e:
+                        print(f"  파일 이동 실패 {file}: {e}")
+            
+            # 폴더 삭제
+            try:
+                os.rmdir(item_path)  # rmdir은 빈 폴더만 삭제함
+                print(f"폴더 삭제 완료: {item}")
+            except Exception as e:
+                print(f"폴더 삭제 실패 {item}: {e}")
+
+if __name__ == "__main__":
+    # 실행 전 확인
+    confirm = input(f"{main_dir} 디렉토리의 모든 하위 폴더에서 파일을 추출하고 폴더를 삭제합니다. 계속하시겠습니까? (y/n): ")
+    
+    if confirm.lower() == 'y':
+        extract_files_and_remove_folders()
+        print("작업 완료!")
+    else:
+        print("작업이 취소되었습니다.")
+
+ """

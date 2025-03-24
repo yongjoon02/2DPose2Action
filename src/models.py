@@ -92,8 +92,8 @@ class TCN(nn.Module):
         self.tcn = TemporalConvNet(input_size, num_channels, kernel_size=kernel_size, dropout=dropout, use_se=use_se)
         self.linear = nn.Linear(num_channels[-1], output_size)
         self.attention = nn.Linear(num_channels[-1], 1)
-        self.no_activity_threshold = 0.9  # no_activity 클래스(인덱스 3)에 대한 엄격한 threshold
-        self.temporal_window = 5  # 시간적 일관성을 위한 윈도우 크기
+        self.no_activity_threshold = 0.99 # no_activity 클래스(인덱스 3)에 대한 엄격한 threshold
+        self.temporal_window = 7  # 시간적 일관성을 위한 윈도우 크기
         
         # 전이 규칙을 위한 전이 매트릭스 (FSM)
         # 행: 현재 상태, 열: 다음 상태
@@ -104,6 +104,14 @@ class TCN(nn.Module):
         self.transition_matrix[1, 2] = 0
         # "walking -> standing" 금지
         self.transition_matrix[2, 0] = 0
+        # 다른 상태에서 no_activity로의 전이 확률 낮춤
+        self.transition_matrix[0, 3] = 0.4  # standing -> no_activity
+        self.transition_matrix[1, 3] = 0.4  # sitting -> no_activity  
+        self.transition_matrix[2, 3] = 0.4  # walking -> no_activity
+        # no_activity에서 다른 상태로의 전이는 쉽게 허용
+        self.transition_matrix[3, 0] = 1.0  # no_activity -> standing
+        self.transition_matrix[3, 1] = 1.0  # no_activity -> sitting
+        self.transition_matrix[3, 2] = 1.0  # no_activity -> walking
         
     def forward(self, x, conservative_no_activity=True, apply_transition_rules=True):
         # x shape: [batch, time, features]
@@ -140,11 +148,21 @@ class TCN(nn.Module):
                         window = predictions[b, start:end]
                         non_no_activity = (window != 3).sum().item()
                         
-                        # 윈도우의 50% 이상이 no_activity가 아니면, no_activity 예측을 취소
-                        if predictions[b, t] == 3 and non_no_activity > (end-start) * 0.5:
+                        # 윈도우의 60% 이상이 no_activity가 아니면, no_activity 예측을 취소 (이전 50%에서 강화)
+                        if predictions[b, t] == 3 and non_no_activity > (end-start) * 0.6:
                             # 3(no_activity)가 아닌 클래스 중 가장 높은 확률을 가진 클래스로 변경
                             probs_except_no_activity = probs[b, t].clone()
                             probs_except_no_activity[3] = 0  # no_activity 확률을 0으로 설정
+                            
+                            # 주변 프레임 정보도 고려하여 결정 (새로운 로직)
+                            if t > 0 and predictions[b, t-1] != 3:
+                                # 이전 프레임이 no_activity가 아니면 이전 프레임의 클래스에 보너스
+                                probs_except_no_activity[predictions[b, t-1]] *= 1.2
+                            
+                            if t < seq_len-1 and predictions[b, t+1] != 3:
+                                # 다음 프레임이 no_activity가 아니면 다음 프레임의 클래스에 보너스
+                                probs_except_no_activity[predictions[b, t+1]] *= 1.2
+                            
                             _, new_pred = torch.max(probs_except_no_activity, dim=0)
                             processed_preds[b, t] = new_pred
             

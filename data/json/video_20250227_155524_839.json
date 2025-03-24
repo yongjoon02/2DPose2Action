@@ -1,1 +1,16 @@
-{"videoId":351356558,"datasetId":1031394,"videoName":"video_20250227_155524_839.mp4","createdAt":"2025-03-17T04:56:20.046Z","updatedAt":"2025-03-19T05:31:13.810Z","link":null,"description":"","tags":[{"name":"no_activity","id":166760877,"tagId":32823650,"frameRange":[0,12],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:31:08.858Z","updatedAt":"2025-03-19T05:31:13.230Z","isFinished":true,"nonFinalValue":false},{"name":"walking","id":166760878,"tagId":32823653,"frameRange":[12,101],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:31:13.806Z","updatedAt":"2025-03-19T05:31:18.126Z","isFinished":true,"nonFinalValue":false}],"objects":[],"size":{"height":1080,"width":1920},"framesCount":102,"frames":[]}
+[
+    {
+        "frameRange": [
+            0,
+            12
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            12,
+            101
+        ],
+        "activity": "walking"
+    }
+]

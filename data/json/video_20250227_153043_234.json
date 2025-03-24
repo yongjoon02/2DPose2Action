@@ -1,1 +1,23 @@
-{"videoId":351356403,"datasetId":1031394,"videoName":"video_20250227_153043_234.mp4","createdAt":"2025-03-17T04:56:11.554Z","updatedAt":"2025-03-17T08:51:21.937Z","link":null,"description":"","tags":[{"name":"no_activity","id":166700633,"tagId":32823650,"frameRange":[0,47],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-17T08:51:07.520Z","updatedAt":"2025-03-17T08:51:12.588Z","isFinished":true,"nonFinalValue":false},{"name":"no_activity","id":166700663,"tagId":32823650,"frameRange":[65,101],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-17T08:51:21.929Z","updatedAt":"2025-03-17T08:51:21.929Z","isFinished":true,"nonFinalValue":false},{"name":"standing","id":166700649,"tagId":32823652,"frameRange":[47,65],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-17T08:51:14.607Z","updatedAt":"2025-03-17T08:51:20.828Z","isFinished":true,"nonFinalValue":false}],"objects":[],"size":{"height":1080,"width":1920},"framesCount":102,"frames":[]}
+[
+    {
+        "frameRange": [
+            0,
+            47
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            65,
+            101
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            47,
+            65
+        ],
+        "activity": "standing"
+    }
+]

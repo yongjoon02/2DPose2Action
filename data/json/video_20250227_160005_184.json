@@ -1,1 +1,9 @@
-{"videoId":351357041,"datasetId":1031394,"videoName":"video_20250227_160005_184.mp4","createdAt":"2025-03-17T04:56:49.575Z","updatedAt":"2025-03-19T05:33:41.605Z","link":null,"description":"","tags":[{"name":"no_presence","id":166760891,"tagId":32823649,"frameRange":[0,101],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:33:41.595Z","updatedAt":"2025-03-19T05:33:41.595Z","isFinished":true,"nonFinalValue":false}],"objects":[],"size":{"height":1080,"width":1920},"framesCount":102,"frames":[]}
+[
+    {
+        "frameRange": [
+            0,
+            101
+        ],
+        "activity": "no_presence"
+    }
+]

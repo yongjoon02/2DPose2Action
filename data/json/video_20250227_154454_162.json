@@ -1,1 +1,16 @@
-{"videoId":351357038,"datasetId":1031394,"videoName":"video_20250227_154454_162.mp4","createdAt":"2025-03-17T04:56:48.861Z","updatedAt":"2025-03-18T01:32:30.483Z","link":null,"description":"","tags":[{"name":"no_activity","id":166757739,"tagId":32823650,"frameRange":[0,69],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-18T01:32:21.042Z","updatedAt":"2025-03-18T01:32:28.260Z","isFinished":true,"nonFinalValue":false},{"name":"standing","id":166757740,"tagId":32823652,"frameRange":[69,101],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-18T01:32:30.472Z","updatedAt":"2025-03-18T01:32:34.467Z","isFinished":true,"nonFinalValue":false}],"objects":[],"size":{"height":1080,"width":1920},"framesCount":102,"frames":[]}
+[
+    {
+        "frameRange": [
+            0,
+            69
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            69,
+            101
+        ],
+        "activity": "standing"
+    }
+]

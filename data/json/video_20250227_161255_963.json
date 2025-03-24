@@ -1,1 +1,37 @@
-{"videoId":351357039,"datasetId":1031394,"videoName":"video_20250227_161255_963.mp4","createdAt":"2025-03-17T04:56:49.106Z","updatedAt":"2025-03-19T05:35:41.145Z","link":null,"description":"","tags":[{"name":"standing","id":166760901,"tagId":32823652,"frameRange":[19,30],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:35:20.778Z","updatedAt":"2025-03-19T05:35:31.830Z","isFinished":true,"nonFinalValue":false},{"name":"sitting","id":166760903,"tagId":32823651,"frameRange":[53,61],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:35:37.117Z","updatedAt":"2025-03-19T05:35:40.411Z","isFinished":true,"nonFinalValue":false},{"name":"no_activity","id":166760900,"tagId":32823650,"frameRange":[0,19],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:35:16.158Z","updatedAt":"2025-03-19T05:35:20.100Z","isFinished":true,"nonFinalValue":false},{"name":"no_activity","id":166760902,"tagId":32823650,"frameRange":[30,53],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:35:32.422Z","updatedAt":"2025-03-19T05:35:36.313Z","isFinished":true,"nonFinalValue":false},{"name":"no_activity","id":166760904,"tagId":32823650,"frameRange":[61,101],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:35:41.139Z","updatedAt":"2025-03-19T05:35:44.616Z","isFinished":true,"nonFinalValue":false}],"objects":[],"size":{"height":1080,"width":1920},"framesCount":102,"frames":[]}
+[
+    {
+        "frameRange": [
+            19,
+            30
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            53,
+            61
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            0,
+            19
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            30,
+            53
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            61,
+            101
+        ],
+        "activity": "no_activity"
+    }
+]

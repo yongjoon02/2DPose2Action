@@ -1,1 +1,9 @@
-{"videoId":351356563,"datasetId":1031394,"videoName":"video_20250227_155504_822.mp4","createdAt":"2025-03-17T04:56:21.163Z","updatedAt":"2025-03-19T05:30:56.566Z","link":null,"description":"","tags":[{"name":"walking","id":166760876,"tagId":32823653,"frameRange":[0,101],"labelerLogin":"yongjoon1212@gmail.com","createdAt":"2025-03-19T05:30:56.562Z","updatedAt":"2025-03-19T05:31:01.208Z","isFinished":true,"nonFinalValue":false}],"objects":[],"size":{"height":1080,"width":1920},"framesCount":102,"frames":[]}
+[
+    {
+        "frameRange": [
+            0,
+            101
+        ],
+        "activity": "walking"
+    }
+]
