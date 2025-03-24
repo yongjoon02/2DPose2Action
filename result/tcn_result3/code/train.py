@@ -638,7 +638,7 @@ def main():
             "use_se": True,
             "activation": "ReLU",
             "thresholds": {
-                "no_activity_threshold": 0.98,  # no_activity 클래스(인덱스 3)에 대한 임계값
+                "no_activity_threshold": 0.99,  # no_activity 클래스(인덱스 3)에 대한 임계값
                 "temporal_window": 7           # 시간적 일관성을 위한 윈도우 크기
             },
             "transition_rules": {
@@ -649,9 +649,9 @@ def main():
                     {"from": "walking", "to": "standing", "from_idx": 2, "to_idx": 0}
                 ],
                 "transition_matrix": [
-                    [1, 1, 1, 1, 1],  # standing -> * (no_activity로의 전이 제한)
-                    [1, 1, 0, 1, 1],  # sitting -> * (walking 불가, no_activity로의 전이 제한)
-                    [0, 1, 1, 1, 1],  # walking -> * (standing 불가, no_activity로의 전이 제한)
+                    [1, 1, 1, 0.4, 1],  # standing -> * (no_activity로의 전이 제한)
+                    [1, 1, 0, 0.4, 1],  # sitting -> * (walking 불가, no_activity로의 전이 제한)
+                    [0, 1, 1, 0.4, 1],  # walking -> * (standing 불가, no_activity로의 전이 제한)
                     [1, 1, 1, 1, 1],    # no_activity -> * (모든 전이 허용)
                     [1, 1, 1, 1, 1]     # no_presence -> *
                 ],
