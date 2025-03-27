@@ -1,0 +1,8 @@
+테스트 프레임 정확도: 85.4779%
+
+클래스별 프레임 정확도:
+standing: 51.6807%
+sitting: 72.9508%
+walking: 89.9063%
+no_activity: 83.9400%
+no_presence: 99.2620%

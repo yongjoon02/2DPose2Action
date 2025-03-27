@@ -76,7 +76,10 @@ def validate(model, dataloader, criterion, device):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
     
-    return epoch_loss / len(dataloader), 100 * correct / total
+    # 전체 정확도 계산
+    accuracy = 100 * correct / total if total > 0 else 0
+    
+    return epoch_loss / len(dataloader), accuracy
 
 def train_with_early_stopping(model, train_loader, valid_loader, criterion, optimizer, scheduler, device, 
                            num_epochs=200, patience=20, fold_dir=None):
@@ -670,8 +673,8 @@ def train_model(dataset, config):
         f.write(f"평균 검증 정확도: {mean_acc:.2f}% ± {std_acc:.2f}%\n")
         f.write(f"평균 검증 손실: {mean_loss:.6f} ± {std_loss:.6f}\n\n")
         f.write("각 폴드 결과:\n")
-        for i, (acc, loss) in enumerate(zip(fold_accuracies, fold_losses), 1):
-            f.write(f"Fold {i}: 정확도 = {acc:.2f}%, 손실 = {loss:.6f}\n")
+        for i, result in enumerate(fold_results, 1):
+            f.write(f"Fold {i}: 정확도 = {result['accuracy']:.2f}%, 손실 = {result['loss']:.6f}\n")
     
     # 최종 테스트 단계 - 모든 폴드 모델의 앙상블 사용
     print("\n테스트 데이터셋에 대한 평가 시작")
@@ -826,17 +829,13 @@ def train_model(dataset, config):
                 plt.ylabel('True Class')
                 plt.xlabel('Predicted Class')
                 plt.tight_layout()
-                plt.savefig(os.path.join(combined_results_dir, "compare.png"))
+                plt.savefig(os.path.join(combined_results_dir, "confusion_matrix.png"))
                 plt.close()
             except Exception as e:
                 print(f"시각화 저장 중 오류 발생: {e}")
             
             # 업데이트된 config에 results 추가
             config["results"] = final_results
-            
-            # 최종 하이퍼파라미터와 결과 저장
-            with open(os.path.join(combined_results_dir, "hyperparameters.json"), "w", encoding="utf-8") as f:
-                json.dump(config, f, indent=4, ensure_ascii=False)
         
         print(f"테스트 결과가 {output_dir}에 저장되었습니다.")
     
