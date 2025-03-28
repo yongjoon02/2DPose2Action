@@ -1,0 +1,121 @@
+[
+    {
+        "frameRange": [
+            0,
+            0
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            1,
+            32
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            33,
+            33
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            34,
+            36
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            37,
+            37
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            38,
+            43
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            44,
+            46
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            47,
+            47
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            48,
+            48
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            49,
+            49
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            50,
+            52
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            53,
+            59
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            60,
+            60
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            61,
+            66
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            67,
+            68
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            69,
+            71
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            72,
+            101
+        ],
+        "activity": "walking"
+    }
+]
