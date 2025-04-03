@@ -1,0 +1,9 @@
+
+mAP: 95.72%
+
+클래스별 AP:
+standing: 88.48%
+sitting: 93.95%
+walking: 98.79%
+no_activity: 98.02%
+no_presence: 99.36%

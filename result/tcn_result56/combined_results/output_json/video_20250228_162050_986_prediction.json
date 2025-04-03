@@ -1,0 +1,30 @@
+[
+    {
+        "frameRange": [
+            0,
+            23
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            24,
+            38
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            39,
+            64
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            65,
+            101
+        ],
+        "activity": "no_activity"
+    }
+]

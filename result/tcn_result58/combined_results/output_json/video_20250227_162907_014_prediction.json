@@ -1,0 +1,128 @@
+[
+    {
+        "frameRange": [
+            0,
+            26
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            27,
+            29
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            30,
+            31
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            32,
+            32
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            33,
+            35
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            36,
+            36
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            37,
+            39
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            40,
+            40
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            41,
+            51
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            52,
+            89
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            90,
+            91
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            92,
+            92
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            93,
+            93
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            94,
+            94
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            95,
+            95
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            96,
+            96
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            97,
+            97
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            98,
+            101
+        ],
+        "activity": "standing"
+    }
+]

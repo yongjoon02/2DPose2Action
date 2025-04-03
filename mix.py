@@ -30,13 +30,13 @@ rename_files(directory)"""
 import re
 
 # 파일이 있는 디렉토리 경로를 지정하세요.
-directory = r"F:\didimdol2_label"
+directory = r"F:\didim_data1_label"
 
 # 날짜 패턴 (YYYY-MM-DD 형식으로 시작하는 파일명)
 date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}\s+(.*)$')
 
-# video ID 패턴 (video로 시작하여 .mp4 전까지의 부분)
-video_pattern = re.compile(r'(video[^.]*?)\.mp4')
+# video ID 패턴을 수정 (.mp4에 의존하지 않도록)
+video_pattern = re.compile(r'(video_\d{8}_\d{6}_\d{3})')  # 수정된 코드
 
 for filename in os.listdir(directory):
     old_path = os.path.join(directory, filename)
@@ -81,12 +81,12 @@ for filename in os.listdir(directory):
             else:
                 print(f"Pattern not matched: {filename}")"""
 
-import os
+"""import os
 import glob
 import json
 
 # 입력 및 출력 디렉토리 설정
-input_dir = r'F:\yolo\data\json'
+input_dir = r'F:\didim_data1_label'
 output_dir = r'F:\yolo\data\json2'
 
 # 출력 디렉토리가 없으면 생성
@@ -139,7 +139,7 @@ for file_path in glob.glob(os.path.join(input_dir, '*.json')):
     
     print(f"처리 완료: {file_path} -> {output_file_path}")
 
-print("JSON 변환 완료!")
+print("JSON 변환 완료!")"""
 
 
 
@@ -314,3 +314,79 @@ if __name__ == "__main__":
         print("작업이 취소되었습니다.")
 
  """
+
+import os
+import shutil
+
+def get_file_names(directory):
+    """디렉토리에서 파일명만 추출 (확장자 제외)"""
+    files = []
+    for filename in os.listdir(directory):
+        if os.path.isfile(os.path.join(directory, filename)):
+            # 확장자 제외한 파일명만 저장
+            base_name = os.path.splitext(filename)[0]
+            files.append(base_name)
+    return set(files)  # 중복 제거를 위해 set 사용
+
+def find_and_delete_unique_files():
+    # 디렉토리 경로
+    json2_dir = r"F:\yolo\data\json2"
+    didim_dir = r"F:\didim_data1"
+    
+    # 각 디렉토리의 파일명 목록 가져오기
+    print("파일 목록 읽는 중...")
+    json2_files = get_file_names(json2_dir)
+    didim_files = get_file_names(didim_dir)
+    
+    # didim_data1에만 있는 파일 찾기
+    unique_to_didim = didim_files - json2_files
+    
+    print(f"\njson2 디렉토리 파일 수: {len(json2_files)}")
+    print(f"didim 디렉토리 파일 수: {len(didim_files)}")
+    print(f"didim에만 있는 파일 수: {len(unique_to_didim)}")
+    
+    if len(unique_to_didim) == 0:
+        print("\n삭제할 파일이 없습니다.")
+        return
+    
+    # 삭제할 파일 목록 출력
+    print("\n삭제 예정인 파일 목록:")
+    for filename in sorted(unique_to_didim):
+        print(f"- {filename}")
+    
+    # 사용자 확인
+    confirmation = input("\n위 파일들을 삭제하시겠습니까? (yes/no): ")
+    if confirmation.lower() != 'yes':
+        print("삭제가 취소되었습니다.")
+        return
+    
+    # 삭제 진행
+    deleted_count = 0
+    error_count = 0
+    
+    print("\n파일 삭제 중...")
+    for base_name in unique_to_didim:
+        # 원본 파일명과 동일한 모든 파일 찾기 (확장자 상관없이)
+        for filename in os.listdir(didim_dir):
+            current_base_name = os.path.splitext(filename)[0]
+            if current_base_name == base_name:
+                try:
+                    file_path = os.path.join(didim_dir, filename)
+                    os.remove(file_path)
+                    print(f"삭제됨: {filename}")
+                    deleted_count += 1
+                except Exception as e:
+                    print(f"오류 발생 ({filename}): {str(e)}")
+                    error_count += 1
+    
+    # 결과 보고
+    print(f"\n작업 완료:")
+    print(f"- 성공적으로 삭제된 파일: {deleted_count}개")
+    if error_count > 0:
+        print(f"- 삭제 실패한 파일: {error_count}개")
+
+if __name__ == "__main__":
+    try:
+        find_and_delete_unique_files()
+    except Exception as e:
+        print(f"\n예상치 못한 오류가 발생했습니다: {str(e)}")

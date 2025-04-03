@@ -1,0 +1,6 @@
+Segmental Edit Score: 59.44%
+
+세그먼트 통계:
+실제 세그먼트 수: 92
+예측 세그먼트 수: 143
+Edit Distance: 58

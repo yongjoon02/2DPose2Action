@@ -1,0 +1,23 @@
+[
+    {
+        "frameRange": [
+            0,
+            24
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            25,
+            68
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            69,
+            101
+        ],
+        "activity": "sitting"
+    }
+]

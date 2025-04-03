@@ -1,0 +1,72 @@
+[
+    {
+        "frameRange": [
+            0,
+            0
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            1,
+            1
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            2,
+            8
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            9,
+            9
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            10,
+            63
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            64,
+            64
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            65,
+            68
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            69,
+            69
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            70,
+            72
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            73,
+            101
+        ],
+        "activity": "standing"
+    }
+]

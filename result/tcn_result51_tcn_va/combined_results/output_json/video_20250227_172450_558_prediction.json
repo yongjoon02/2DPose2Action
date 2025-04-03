@@ -1,0 +1,128 @@
+[
+    {
+        "frameRange": [
+            0,
+            5
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            6,
+            7
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            8,
+            8
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            9,
+            9
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            10,
+            10
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            11,
+            13
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            14,
+            16
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            17,
+            17
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            18,
+            20
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            21,
+            21
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            22,
+            27
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            28,
+            28
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            29,
+            29
+        ],
+        "activity": "sitting"
+    },
+    {
+        "frameRange": [
+            30,
+            74
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            75,
+            75
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            76,
+            77
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            78,
+            80
+        ],
+        "activity": "standing"
+    },
+    {
+        "frameRange": [
+            81,
+            101
+        ],
+        "activity": "no_activity"
+    }
+]

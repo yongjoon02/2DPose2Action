@@ -1,0 +1,142 @@
+[
+    {
+        "frameRange": [
+            0,
+            0
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            1,
+            3
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            4,
+            4
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            5,
+            7
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            8,
+            8
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            9,
+            11
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            12,
+            12
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            13,
+            13
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            14,
+            14
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            15,
+            15
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            16,
+            16
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            17,
+            17
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            18,
+            20
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            21,
+            21
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            22,
+            24
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            25,
+            25
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            26,
+            31
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            32,
+            33
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            34,
+            34
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            35,
+            101
+        ],
+        "activity": "walking"
+    }
+]

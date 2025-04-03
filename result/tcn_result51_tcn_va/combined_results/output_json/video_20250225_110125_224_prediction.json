@@ -1,0 +1,100 @@
+[
+    {
+        "frameRange": [
+            0,
+            51
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            52,
+            53
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            54,
+            54
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            55,
+            55
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            56,
+            56
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            57,
+            57
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            58,
+            58
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            59,
+            59
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            60,
+            60
+        ],
+        "activity": "no_activity"
+    },
+    {
+        "frameRange": [
+            61,
+            75
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            76,
+            80
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            81,
+            81
+        ],
+        "activity": "walking"
+    },
+    {
+        "frameRange": [
+            82,
+            82
+        ],
+        "activity": "no_presence"
+    },
+    {
+        "frameRange": [
+            83,
+            101
+        ],
+        "activity": "walking"
+    }
+]
