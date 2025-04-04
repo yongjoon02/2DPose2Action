@@ -1,0 +1,6 @@
+Class,Accuracy
+standing,78.40%
+walking,78.63%
+sitting,91.66%
+lying,92.68%
+falling,81.07%

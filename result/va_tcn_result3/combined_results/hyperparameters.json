@@ -1,0 +1,118 @@
+{
+    "training": {
+        "batch_size": 32,
+        "num_epochs": 200,
+        "learning_rate": 0.0001,
+        "weight_decay": 0.0001,
+        "early_stopping_patience": 30,
+        "optimizer": "AdamW",
+        "scheduler": "CosineAnnealingWarmRestarts",
+        "scheduler_params": {
+            "T_0": 10,
+            "T_mult": 2
+        },
+        "loss_function": "WeightedFocalLoss",
+        "loss_params": {
+            "gamma": 2.0,
+            "class_weights": null,
+            "weight_description": "클래스 불균형 해소 및 중요 클래스 강조를 위한 가중치"
+        },
+        "augmentation": {
+            "enabled": true,
+            "augment_probability": 0.7,
+            "techniques": [],
+            "enhanced_augmentation": {}
+        }
+    },
+    "model": {
+        "type": "TCN",
+        "input_size": 34,
+        "output_size": 5,
+        "hidden_channels": [
+            64,
+            64,
+            64,
+            64,
+            64
+        ],
+        "kernel_size": 3,
+        "dropout": 0.2,
+        "use_se": true,
+        "transition_rules": {
+            "enabled": true,
+            "description": "FSM과 확률 기반 접근법을 결합한 전이 규칙",
+            "forbidden_transitions": [
+                {
+                    "from": "sitting",
+                    "to": "walking",
+                    "from_idx": 1,
+                    "to_idx": 2
+                },
+                {
+                    "from": "walking",
+                    "to": "standing",
+                    "from_idx": 2,
+                    "to_idx": 0
+                }
+            ],
+            "method": "FSM with probability-based selection"
+        }
+    },
+    "classes": [
+        "standing",
+        "sitting",
+        "walking",
+        "no_activity",
+        "no_presence"
+    ],
+    "device": "cpu",
+    "seed": 42,
+    "environment": {
+        "timestamp": "2025-04-04 10:38:09",
+        "python_version": "3.10.0",
+        "pytorch_version": "2.6.0",
+        "numpy_version": "2.2.4",
+        "code_archived": true,
+        "archived_files": [
+            "train.py"
+        ]
+    },
+    "results": {
+        "val_loss": 0.5334411489669807,
+        "val_accuracy": 84.10539215686275,
+        "test_accuracy": 81.09803921568628,
+        "class_accuracy": {
+            "standing": 74.88636363636364,
+            "sitting": 79.03225806451613,
+            "walking": 84.05127127547804,
+            "no_activity": 93.29364298366464,
+            "no_presence": 17.509402423735896
+        },
+        "mAP": null,
+        "class_AP": {},
+        "overlap_f1_scores": {
+            "0.25": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "tp": 4,
+                "fp": 0,
+                "fn": 0
+            },
+            "0.5": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "tp": 4,
+                "fp": 0,
+                "fn": 0
+            }
+        },
+        "segmental_edit_score": null,
+        "segment_statistics": {
+            "num_true_segments": 4,
+            "num_pred_segments": 4,
+            "edit_distance": null
+        }
+    }
+}

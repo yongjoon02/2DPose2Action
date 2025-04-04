@@ -161,7 +161,7 @@ def main():
         model = load_model_from_checkpoint(checkpoint_path, config, device)
         
         # 비디오 파일 경로 설정
-        video_dir = "data/2d video"  # 추론할 비디오가 있는 디렉토리
+        video_dir = "data/inference_video"  # 추론할 비디오가 있는 디렉토리
         if not os.path.exists(video_dir):
             raise FileNotFoundError(f"비디오 디렉토리를 찾을 수 없습니다: {video_dir}")
         

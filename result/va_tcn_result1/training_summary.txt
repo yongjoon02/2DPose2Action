@@ -1,0 +1,3 @@
+총 학습 에포크: 20/20
+최고 검증 정확도: 0.9223
+최종 모델 저장 경로: result\va_tcn_result1\best_model.pth

@@ -1,0 +1,76 @@
+{
+    "training": {
+        "batch_size": 32,
+        "num_epochs": 200,
+        "learning_rate": 0.0001,
+        "weight_decay": 1e-05,
+        "early_stopping_patience": 30,
+        "optimizer": "Adam",
+        "scheduler": "ReduceLROnPlateau",
+        "scheduler_params": {
+            "factor": 0.5,
+            "patience": 5
+        }
+    },
+    "model": {
+        "type": "TCN",
+        "input_size": 34,
+        "output_size": 5,
+        "hidden_channels": [
+            64,
+            64,
+            64,
+            64,
+            64
+        ],
+        "kernel_size": 3,
+        "dropout": 0.2
+    },
+    "classes": [
+        "standing",
+        "sitting",
+        "walking",
+        "no_activity",
+        "no_presence"
+    ],
+    "device": "cpu",
+    "seed": 42,
+    "environment": {
+        "timestamp": "2025-04-04 14:33:39",
+        "python_version": "3.10.0",
+        "pytorch_version": "2.0.0",
+        "numpy_version": "1.24.0"
+    },
+    "results": {
+        "test_accuracy": 81.09803921568628,
+        "class_accuracy": {
+            "standing": 72.53521126760563,
+            "sitting": 72.69890795631825,
+            "walking": 84.60397508157817,
+            "no_activity": 94.03877887788778,
+            "no_presence": 9.409190371991247
+        },
+        "overlap_f1_scores": {
+            "0.25": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "tp": 4,
+                "fp": 0,
+                "fn": 0
+            },
+            "0.5": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "tp": 4,
+                "fp": 0,
+                "fn": 0
+            }
+        },
+        "segment_statistics": {
+            "num_true_segments": 4,
+            "num_pred_segments": 4
+        }
+    }
+}
