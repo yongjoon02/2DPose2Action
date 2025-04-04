@@ -1,0 +1,16 @@
+F1 Overlap Score 결과
+
+총 세그먼트 수: 실제=272, 예측=462
+
+임계값 25%:
+  Precision: 0.4913
+  Recall: 0.8346
+  F1 Score: 0.6185
+  TP: 227, FP: 235, FN: 45
+
+임계값 50%:
+  Precision: 0.4177
+  Recall: 0.7096
+  F1 Score: 0.5259
+  TP: 193, FP: 269, FN: 79
+

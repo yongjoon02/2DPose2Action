@@ -65,6 +65,7 @@ class TCN(nn.Module):
 
     def forward(self, x):
         # 입력: [batch_size, seq_len, input_size]
+        
         # TCN용 형식으로 변환: [batch_size, input_size, seq_len]
         x = x.transpose(1, 2)
         

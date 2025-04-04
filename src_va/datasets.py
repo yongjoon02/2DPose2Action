@@ -157,14 +157,51 @@ class SkeletonDataset(Dataset):
             else:
                 joint_columns = df.columns
             
+            # JSON 파일 가져오기 및 레이블 확인
+            json_path = os.path.join(self.json_dir, filename.replace(".csv", ".json"))
+            with open(json_path, 'r') as f:
+                info = json.load(f)
+            
+            # no_presence 여부 확인
+            is_no_presence = False
+            
+            # 리스트 형태의 JSON
+            if isinstance(info, list):
+                for item in info:
+                    if "activity" in item and item["activity"] == "no_presence":
+                        is_no_presence = True
+                        break
+            # 딕셔너리 형태의 JSON
+            elif isinstance(info, dict) and "activity" in info and info["activity"] == "no_presence":
+                is_no_presence = True
+            
+            # CSV 파일이 비어있거나 데이터가 올바르지 않은 경우 처리
+            if df.empty or len(df) == 0 or df.isnull().all().all():
+                # no_presence 케이스로 처리
+                coords = torch.zeros((100, len(joint_columns) if joint_columns else 34), dtype=torch.float32)
+                labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
+                return coords, labels
+            
             # 좌표 데이터 추출 및 전처리
             coords = df[joint_columns].values.astype(np.float32)
+            
+            # 데이터가 모두 0이거나 NaN인 경우
+            if np.isnan(coords).all() or np.all(coords == 0):
+                coords = torch.zeros((100, len(joint_columns)), dtype=torch.float32)
+                # JSON에서 no_presence로 명시된 경우만 no_presence로 라벨링
+                if is_no_presence:
+                    labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
+                else:
+                    # 그렇지 않으면 no_activity
+                    labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
+                return coords, labels
+                
             coords = _apply_moving_average(coords, window_size=3)
             coords = _normalize_coords(coords)
             
             # 프레임별 레이블 가져오기
             _, frame_labels = self.file_frame_labels[filename]
-            
+                
             # 텐서로 변환
             coords = torch.tensor(coords, dtype=torch.float32)
             frame_labels = torch.tensor(frame_labels, dtype=torch.long)
@@ -177,9 +214,33 @@ class SkeletonDataset(Dataset):
         
         except Exception as e:
             print(f"Error loading {self.csv_files[idx]}: {e}")
-            # 오류 시 더미 데이터 반환
+            # JSON 파일로 no_presence 확인
+            try:
+                json_path = os.path.join(self.json_dir, self.csv_files[idx].replace(".csv", ".json"))
+                with open(json_path, 'r') as f:
+                    info = json.load(f)
+                
+                # no_presence 여부 확인
+                is_no_presence = False
+                if isinstance(info, list):
+                    for item in info:
+                        if "activity" in item and item["activity"] == "no_presence":
+                            is_no_presence = True
+                            break
+                elif isinstance(info, dict) and "activity" in info and info["activity"] == "no_presence":
+                    is_no_presence = True
+                
+                if is_no_presence:
+                    # no_presence로 설정
+                    coords = torch.zeros((100, 34), dtype=torch.float32)
+                    labels = torch.ones(100, dtype=torch.long) * 4  # 4 = no_presence
+                    return coords, labels
+            except:
+                pass
+                
+            # 기본값: no_activity
             coords = torch.zeros((100, 34), dtype=torch.float32)
-            labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
+            labels = torch.ones(100, dtype=torch.long) * 3  # 3 = no_activity
             return coords, labels
     
     def get_class_distribution(self):

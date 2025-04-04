@@ -44,6 +44,7 @@ def main():
         config["training"]["device"] = "cpu"
     
     # Set data directories based on dataset size
+    dataset_size = args.dataset_size if args.dataset_size else 500
     if args.dataset_size:
         config["data"]["csv_dir"] = os.path.join(project_root, "data", f"csv_{args.dataset_size}")
         config["data"]["json_dir"] = os.path.join(project_root, "data", f"json_{args.dataset_size}")
@@ -80,6 +81,14 @@ def main():
             collate_fn=custom_collate,
             num_workers=2
         )
+        
+        # 테스트 데이터셋 정보 추가
+        config["test_dataset"] = {
+            "csv_dir": os.path.join(test_dir, "test_csv"),
+            "json_dir": os.path.join(test_dir, "test_json"),
+            "num_samples": len(test_dataset),
+            "class_distribution": test_dataset.get_class_distribution()
+        }
     except Exception as e:
         print(f"Error creating test dataset: {e}")
         print(f"Cannot proceed without test dataset")
@@ -134,6 +143,15 @@ def main():
         print("Class distribution:")
         for class_idx, count in class_dist.items():
             print(f"  {class_mapping[class_idx]}: {count} samples")
+        
+        # 학습 데이터셋 정보 추가
+        config["train_dataset"] = {
+            "size": dataset_size,
+            "csv_dir": config["data"]["csv_dir"],
+            "json_dir": config["data"]["json_dir"],
+            "num_samples": len(dataset),
+            "class_distribution": dataset.get_class_distribution()
+        }
     except Exception as e:
         print(f"Error loading dataset: {e}")
         sys.exit(1)
@@ -145,6 +163,14 @@ def main():
     train_size = int(0.8 * len(dataset))
     train_indices = indices[:train_size]
     val_indices = indices[train_size:]
+    
+    # 데이터셋 분할 정보 추가
+    config["dataset_split"] = {
+        "train_size": len(train_indices),
+        "val_size": len(val_indices),
+        "train_ratio": 0.8,
+        "val_ratio": 0.2
+    }
     
     # 데이터 로더 생성
     train_dataset = torch.utils.data.Subset(dataset, train_indices)

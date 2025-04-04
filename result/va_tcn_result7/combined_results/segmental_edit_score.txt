@@ -1,0 +1,5 @@
+Segmental Edit Score 결과
+
+총 세그먼트 수: 실제=268, 예측=531
+Edit Distance: 271
+Normalized Edit Score: 48.9642

@@ -1,0 +1,86 @@
+{
+    "training": {
+        "batch_size": 32,
+        "num_epochs": 200,
+        "learning_rate": 0.0001,
+        "weight_decay": 1e-05,
+        "early_stopping_patience": 30,
+        "optimizer": "Adam",
+        "scheduler": "ReduceLROnPlateau",
+        "scheduler_params": {
+            "factor": 0.5,
+            "patience": 5
+        }
+    },
+    "model": {
+        "type": "TCN",
+        "input_size": 34,
+        "output_size": 5,
+        "hidden_channels": [
+            64,
+            64,
+            64,
+            64,
+            64
+        ],
+        "kernel_size": 3,
+        "dropout": 0.2
+    },
+    "classes": [
+        "standing",
+        "sitting",
+        "walking",
+        "no_activity",
+        "no_presence"
+    ],
+    "device": "cpu",
+    "seed": 42,
+    "environment": {
+        "timestamp": "2025-04-04 17:58:37",
+        "python_version": "3.10.0",
+        "pytorch_version": "2.0.0",
+        "numpy_version": "1.24.0"
+    },
+    "results": {
+        "test_accuracy": 81.38736263736264,
+        "class_accuracy": {
+            "standing": 70.18779342723005,
+            "sitting": 71.29485179407176,
+            "walking": 87.95609611391278,
+            "no_activity": 92.36168455821635,
+            "no_presence": 10.989010989010989
+        },
+        "mAP": 79.81543762961054,
+        "class_ap": {
+            "standing": 71.20938188356014,
+            "sitting": 87.48914246643501,
+            "walking": 94.43737554206871,
+            "no_activity": 92.79296073229588,
+            "no_presence": 53.14832752369294
+        },
+        "overlap_f1_scores": {
+            "25": {
+                "precision": 0.4312617702448211,
+                "recall": 0.8544776119402985,
+                "f1": 0.5732165206508135,
+                "tp": 229,
+                "fp": 302,
+                "fn": 39
+            },
+            "50": {
+                "precision": 0.3709981167608286,
+                "recall": 0.7350746268656716,
+                "f1": 0.493116395494368,
+                "tp": 197,
+                "fp": 334,
+                "fn": 71
+            }
+        },
+        "segmental_edit_score": 48.96421845574388,
+        "segment_statistics": {
+            "num_true_segments": 268,
+            "num_pred_segments": 531,
+            "edit_distance": 271
+        }
+    }
+}

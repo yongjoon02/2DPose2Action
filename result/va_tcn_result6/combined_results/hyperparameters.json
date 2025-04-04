@@ -1,0 +1,79 @@
+{
+    "training": {
+        "batch_size": 32,
+        "num_epochs": 200,
+        "learning_rate": 0.0001,
+        "weight_decay": 1e-05,
+        "early_stopping_patience": 30,
+        "optimizer": "Adam",
+        "scheduler": "ReduceLROnPlateau",
+        "scheduler_params": {
+            "factor": 0.5,
+            "patience": 5
+        }
+    },
+    "model": {
+        "type": "TCN",
+        "input_size": 34,
+        "output_size": 5,
+        "hidden_channels": [
+            64,
+            64,
+            64,
+            64,
+            64
+        ],
+        "kernel_size": 3,
+        "dropout": 0.2
+    },
+    "classes": [
+        "standing",
+        "sitting",
+        "walking",
+        "no_activity",
+        "no_presence"
+    ],
+    "device": "cpu",
+    "seed": 42,
+    "environment": {
+        "timestamp": "2025-04-04 16:05:27",
+        "python_version": "3.10.0",
+        "pytorch_version": "2.0.0",
+        "numpy_version": "1.24.0"
+    },
+    "results": {
+        "test_accuracy": 81.09803921568628,
+        "class_accuracy": {
+            "standing": 72.53521126760563,
+            "sitting": 72.69890795631825,
+            "walking": 84.60397508157817,
+            "no_activity": 94.03877887788778,
+            "no_presence": 9.409190371991247
+        },
+        "mAP": 95.0,
+        "overlap_f1_scores": {
+            "25": {
+                "precision": 0.49134199134199136,
+                "recall": 0.8345588235294118,
+                "f1": 0.6185286103542235,
+                "tp": 227,
+                "fp": 235,
+                "fn": 45
+            },
+            "50": {
+                "precision": 0.41774891774891776,
+                "recall": 0.7095588235294118,
+                "f1": 0.5258855585831064,
+                "tp": 193,
+                "fp": 269,
+                "fn": 79
+            }
+        },
+        "segmental_edit_score": 56.060606060606055,
+        "segment_statistics": {
+            "num_true_segments": 272,
+            "num_pred_segments": 462,
+            "edit_distance": 203
+        }
+    }
+}
