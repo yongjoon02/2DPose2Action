@@ -1,0 +1,6 @@
+Class,Accuracy
+standing,87.56%
+sitting,90.17%
+walking,93.92%
+no_activity,92.59%
+no_presence,97.81%

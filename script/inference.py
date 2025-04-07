@@ -149,12 +149,12 @@ def main():
     
     try:
         # 설정 파일 로드
-        config_path = "result/tcn_result54/combined_results/hyperparameters.json"
+        config_path = r"result\tcn_result72\combined_results\hyperparameters.json"
         with open(config_path, 'r', encoding='utf-8') as f:  # UTF-8 인코딩 명시
             config = json.load(f)
         
         # 모델 체크포인트 로드
-        checkpoint_path = "result/tcn_result54/combined_results/best_model.pth"
+        checkpoint_path = r"result\tcn_result72\combined_results\best_model.pth"
         if not os.path.exists(checkpoint_path):
             raise FileNotFoundError(f"모델 체크포인트를 찾을 수 없습니다: {checkpoint_path}")
         

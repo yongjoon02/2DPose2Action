@@ -631,15 +631,11 @@ def evaluate_and_save_test_results(model, test_loader, criterion, config, result
     
     # 혼동 행렬 생성 및 저장
     cm = confusion_matrix(test_labels, test_preds)
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
-                xticklabels=class_names,
-                yticklabels=class_names)
-    plt.title("Confusion Matrix")
-    plt.xlabel("Predicted Class")
-    plt.ylabel("True Class")
-    plt.savefig(os.path.join(combined_results_dir, "confusion_matrix.png"))
-    plt.close()
+    save_confusion_matrix_png(
+        cm, 
+        class_names,
+        os.path.join(combined_results_dir, "confusion_matrix.png")
+    )
     
     # 클래스 매핑 정보 저장
     with open(os.path.join(combined_results_dir, "class_mapping.txt"), 'w') as f:
@@ -789,4 +785,24 @@ def evaluate_and_save_test_results(model, test_loader, criterion, config, result
         "overlap_f1_scores": overlap_f1_scores,
         "segmental_edit_score": edit_score,
         "segment_statistics": segment_info
-    } 
+    }
+
+def save_confusion_matrix_png(cm, class_names, save_path):
+    """혼동 행렬을 PNG로 저장하는 함수"""
+    plt.figure(figsize=(12, 10))  # 전체 크기 증가
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+               xticklabels=class_names,
+               yticklabels=class_names,
+               annot_kws={'size': 16})  # 숫자 크기 증가
+    
+    plt.title('Confusion Matrix', fontsize=16, pad=20)  # 제목 크기와 여백 증가
+    plt.ylabel('True Class', fontsize=14, labelpad=10)  # y축 라벨 크기와 여백 증가
+    plt.xlabel('Predicted Class', fontsize=14, labelpad=10)  # x축 라벨 크기와 여백 증가
+    
+    # x축과 y축 레이블 크기 조정
+    plt.xticks(fontsize=12, rotation=0, ha='right')
+    plt.yticks(fontsize=12, rotation=0)
+    
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150, bbox_inches='tight')  # DPI 증가로 해상도 향상
+    plt.close() 
