@@ -1,0 +1,6 @@
+Class mapping:
+0: standing
+1: sitting
+2: walking
+3: no_activity
+4: no_presence

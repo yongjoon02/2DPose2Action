@@ -69,25 +69,41 @@ class SkeletonDataset(Dataset):
                 # 모든 프레임에 기본값 (no_activity) 할당
                 labels = np.ones(int(max_frame) + 1, dtype=np.int64) * 3
                 
+                # CSV 파일이 비어있는 경우 기본적으로 no_activity로 설정
+                is_empty_data = df.empty or len(df) == 0 or df.isnull().all().all()
+                
                 # JSON 파일에서 활동 정보 로드
                 json_path = os.path.join(self.json_dir, filename.replace(".csv", ".json"))
                 with open(json_path, 'r') as f:
                     info = json.load(f)
                 
+                # no_presence 여부 확인
+                is_no_presence = False
+                
                 # 리스트 형태인 경우
                 if isinstance(info, list):
+                    # 먼저 no_presence 확인
                     for item in info:
-                        if "frameRange" in item and "activity" in item:
-                            start_frame, end_frame = item["frameRange"]
-                            activity = item["activity"]
-                            
-                            # 매핑된 레이블 있는지 확인
-                            if activity in self.activity_to_label:
-                                label = self.activity_to_label[activity]
-                                # 해당 프레임 범위에 레이블 할당
-                                labels[start_frame:end_frame] = label
-                            else:
-                                unknown_activities.add(activity)
+                        if "activity" in item and item["activity"] == "no_presence":
+                            is_no_presence = True
+                            # no_presence가 있으면 모든 프레임에 no_presence 레이블 할당
+                            labels[:] = 4
+                            break
+                    
+                    # no_presence가 아닌 경우 일반 활동 처리
+                    if not is_no_presence:
+                        for item in info:
+                            if "frameRange" in item and "activity" in item:
+                                start_frame, end_frame = item["frameRange"]
+                                activity = item["activity"]
+                                
+                                # 매핑된 레이블 있는지 확인
+                                if activity in self.activity_to_label:
+                                    label = self.activity_to_label[activity]
+                                    # 해당 프레임 범위에 레이블 할당
+                                    labels[start_frame:end_frame] = label
+                                else:
+                                    unknown_activities.add(activity)
                 
                 # 딕셔너리 형태인 경우
                 elif isinstance(info, dict) and "activity" in info:
@@ -96,25 +112,65 @@ class SkeletonDataset(Dataset):
                         label = self.activity_to_label[activity]
                         # 모든 프레임에 레이블 할당
                         labels[:] = label
+                        
+                        # no_presence 확인
+                        if activity == "no_presence":
+                            is_no_presence = True
                     else:
                         unknown_activities.add(activity)
                 
+                # 빈 데이터이고 no_presence로 확인된 경우
+                if is_empty_data and is_no_presence:
+                    # 모든 프레임에 no_presence 레이블 할당
+                    labels[:] = 4
+                
                 # 실제 데이터 프레임에 맞는 레이블 추출
                 frame_labels = labels[frames]
-                file_frame_labels[filename] = (frames, frame_labels)
+                file_frame_labels[filename] = (frames, frame_labels, is_no_presence)
                 total_frames += len(frames)
                 
             except Exception as e:
                 print(f"Error processing {filename}: {e}")
-                # 오류 시 모든 프레임에 no_activity 할당
+                # JSON 파일에서 no_presence 확인 시도
                 try:
+                    json_path = os.path.join(self.json_dir, filename.replace(".csv", ".json"))
+                    with open(json_path, 'r') as f:
+                        info = json.load(f)
+                    
+                    is_no_presence = False
+                    # 리스트 형태의 JSON
+                    if isinstance(info, list):
+                        for item in info:
+                            if "activity" in item and item["activity"] == "no_presence":
+                                is_no_presence = True
+                                break
+                    # 딕셔너리 형태의 JSON
+                    elif isinstance(info, dict) and "activity" in info and info["activity"] == "no_presence":
+                        is_no_presence = True
+                    
+                    # CSV 파일 확인
                     csv_path = os.path.join(self.csv_dir, filename)
                     df = pd.read_csv(csv_path)
                     frames = np.arange(len(df))
-                    frame_labels = np.ones(len(frames), dtype=np.int64) * 3
-                    file_frame_labels[filename] = (frames, frame_labels)
-                except:
-                    pass
+                    
+                    # no_presence인 경우와 아닌 경우 처리
+                    if is_no_presence:
+                        frame_labels = np.ones(len(frames), dtype=np.int64) * 4  # no_presence
+                    else:
+                        frame_labels = np.ones(len(frames), dtype=np.int64) * 3  # no_activity
+                    
+                    file_frame_labels[filename] = (frames, frame_labels, is_no_presence)
+                except Exception as inner_e:
+                    print(f"Error during fallback processing {filename}: {inner_e}")
+                    # 모든 시도가 실패한 경우 기본값 설정
+                    try:
+                        csv_path = os.path.join(self.csv_dir, filename)
+                        df = pd.read_csv(csv_path)
+                        frames = np.arange(len(df))
+                        frame_labels = np.ones(len(frames), dtype=np.int64) * 3  # no_activity
+                        file_frame_labels[filename] = (frames, frame_labels, False)
+                    except:
+                        pass
         
         # 처리 결과 통계
         if unknown_activities:
@@ -130,7 +186,7 @@ class SkeletonDataset(Dataset):
         self.class_counts = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
         total_frames = 0
         
-        for filename, (frames, labels) in self.file_frame_labels.items():
+        for filename, (frames, labels, _) in self.file_frame_labels.items():
             for label in labels:
                 self.class_counts[label] += 1
                 total_frames += 1
@@ -147,6 +203,13 @@ class SkeletonDataset(Dataset):
     def __getitem__(self, idx):
         try:
             filename = self.csv_files[idx]
+            # 미리 계산된 레이블 정보 가져오기
+            if filename not in self.file_frame_labels:
+                raise ValueError(f"파일 {filename}에 대한 레이블 정보가 없습니다.")
+            
+            frames, frame_labels, is_no_presence = self.file_frame_labels[filename]
+            
+            # CSV 파일 로드
             csv_path = os.path.join(self.csv_dir, filename)
             df = pd.read_csv(csv_path)
             
@@ -157,29 +220,14 @@ class SkeletonDataset(Dataset):
             else:
                 joint_columns = df.columns
             
-            # JSON 파일 가져오기 및 레이블 확인
-            json_path = os.path.join(self.json_dir, filename.replace(".csv", ".json"))
-            with open(json_path, 'r') as f:
-                info = json.load(f)
-            
-            # no_presence 여부 확인
-            is_no_presence = False
-            
-            # 리스트 형태의 JSON
-            if isinstance(info, list):
-                for item in info:
-                    if "activity" in item and item["activity"] == "no_presence":
-                        is_no_presence = True
-                        break
-            # 딕셔너리 형태의 JSON
-            elif isinstance(info, dict) and "activity" in info and info["activity"] == "no_presence":
-                is_no_presence = True
-            
             # CSV 파일이 비어있거나 데이터가 올바르지 않은 경우 처리
             if df.empty or len(df) == 0 or df.isnull().all().all():
-                # no_presence 케이스로 처리
+                # no_presence 정보에 따라 레이블 할당
                 coords = torch.zeros((100, len(joint_columns) if joint_columns else 34), dtype=torch.float32)
-                labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
+                if is_no_presence:
+                    labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
+                else:
+                    labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
                 return coords, labels
             
             # 좌표 데이터 추출 및 전처리
@@ -188,19 +236,15 @@ class SkeletonDataset(Dataset):
             # 데이터가 모두 0이거나 NaN인 경우
             if np.isnan(coords).all() or np.all(coords == 0):
                 coords = torch.zeros((100, len(joint_columns)), dtype=torch.float32)
-                # JSON에서 no_presence로 명시된 경우만 no_presence로 라벨링
+                # 미리 계산된 no_presence 정보 사용
                 if is_no_presence:
                     labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
                 else:
-                    # 그렇지 않으면 no_activity
                     labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
                 return coords, labels
                 
             coords = _apply_moving_average(coords, window_size=3)
             coords = _normalize_coords(coords)
-            
-            # 프레임별 레이블 가져오기
-            _, frame_labels = self.file_frame_labels[filename]
                 
             # 텐서로 변환
             coords = torch.tensor(coords, dtype=torch.float32)
@@ -214,33 +258,25 @@ class SkeletonDataset(Dataset):
         
         except Exception as e:
             print(f"Error loading {self.csv_files[idx]}: {e}")
-            # JSON 파일로 no_presence 확인
+            # 파일을 로드할 수 없는 경우, 미리 계산된 레이블 정보를 확인
             try:
-                json_path = os.path.join(self.json_dir, self.csv_files[idx].replace(".csv", ".json"))
-                with open(json_path, 'r') as f:
-                    info = json.load(f)
-                
-                # no_presence 여부 확인
-                is_no_presence = False
-                if isinstance(info, list):
-                    for item in info:
-                        if "activity" in item and item["activity"] == "no_presence":
-                            is_no_presence = True
-                            break
-                elif isinstance(info, dict) and "activity" in info and info["activity"] == "no_presence":
-                    is_no_presence = True
-                
-                if is_no_presence:
-                    # no_presence로 설정
+                filename = self.csv_files[idx]
+                if filename in self.file_frame_labels:
+                    _, _, is_no_presence = self.file_frame_labels[filename]
+                    
+                    # no_presence 정보에 따라 적절한 레이블 할당
                     coords = torch.zeros((100, 34), dtype=torch.float32)
-                    labels = torch.ones(100, dtype=torch.long) * 4  # 4 = no_presence
+                    if is_no_presence:
+                        labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
+                    else:
+                        labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
                     return coords, labels
             except:
                 pass
                 
-            # 기본값: no_activity
+            # 모든 시도가 실패한 경우 기본값: no_activity
             coords = torch.zeros((100, 34), dtype=torch.float32)
-            labels = torch.ones(100, dtype=torch.long) * 3  # 3 = no_activity
+            labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
             return coords, labels
     
     def get_class_distribution(self):
@@ -254,7 +290,7 @@ class SkeletonDataset(Dataset):
         각 파일별 클래스 분포 반환
         """
         file_class_counts = {}
-        for filename, (frames, labels) in self.file_frame_labels.items():
+        for filename, (frames, labels, _) in self.file_frame_labels.items():
             counts = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
             for label in labels:
                 counts[label] += 1

@@ -1,0 +1,136 @@
+{
+    "training": {
+        "batch_size": 32,
+        "num_epochs": 200,
+        "learning_rate": 0.001,
+        "weight_decay": 0.001,
+        "early_stopping_patience": 30,
+        "optimizer": "AdamW",
+        "scheduler": "CosineAnnealingWarmRestarts",
+        "scheduler_params": {
+            "T_0": 10,
+            "T_mult": 2
+        },
+        "loss_function": "WeightedFocalLoss",
+        "loss_params": {
+            "gamma": 2.0,
+            "class_weights": null,
+            "weight_description": "클래스 불균형 해소 및 중요 클래스(standing, sitting) 강조를 위한 가중치"
+        },
+        "augmentation": {
+            "enabled": true,
+            "augment_probability": 0.7,
+            "techniques": [],
+            "enhanced_augmentation": {}
+        }
+    },
+    "model": {
+        "type": "TCN",
+        "input_size": 34,
+        "output_size": 5,
+        "hidden_channels": [
+            64,
+            128,
+            256
+        ],
+        "kernel_size": 3,
+        "dropout": 0.2,
+        "use_se": true,
+        "transition_rules": {
+            "enabled": true,
+            "description": "FSM과 확률 기반 접근법을 결합한 전이 규칙",
+            "forbidden_transitions": [
+                {
+                    "from": "sitting",
+                    "to": "walking",
+                    "from_idx": 1,
+                    "to_idx": 2
+                },
+                {
+                    "from": "walking",
+                    "to": "standing",
+                    "from_idx": 2,
+                    "to_idx": 0
+                }
+            ],
+            "method": "FSM with probability-based selection"
+        }
+    },
+    "classes": [
+        "standing",
+        "sitting",
+        "walking",
+        "no_activity",
+        "no_presence"
+    ],
+    "device": "cpu",
+    "seed": 42,
+    "environment": {
+        "timestamp": "2025-04-07 10:56:02",
+        "python_version": "3.10.0 | packaged by conda-forge | (default, Nov 10 2021, 13:20:59) [MSC v.1916 64 bit (AMD64)]",
+        "pytorch_version": "2.6.0+cu118",
+        "numpy_version": "2.2.4",
+        "code_archived": true,
+        "archived_files": [
+            "train.py"
+        ]
+    },
+    "dataset": {
+        "size": "2000",
+        "csv_dir": "data/csv_2000",
+        "json_dir": "data/json_2000",
+        "num_samples": 2000,
+        "class_distribution": {
+            "0": 3,
+            "1": 0,
+            "2": 815,
+            "3": 1102,
+            "4": 80
+        },
+        "use_augmentation": true
+    },
+    "results": {
+        "val_loss": 0.07713579501097019,
+        "val_accuracy": 92.625,
+        "test_accuracy": 92.54901960784314,
+        "class_accuracy": {
+            "standing": 93.1924882629108,
+            "sitting": 86.58346333853353,
+            "walking": 94.27469593592406,
+            "no_activity": 91.04785478547855,
+            "no_presence": 98.03063457330416
+        },
+        "mAP": 94.58617848272324,
+        "class_AP": {
+            "standing": 87.09755756054773,
+            "sitting": 91.44722274383719,
+            "walking": 98.19237167635491,
+            "no_activity": 98.00150591264062,
+            "no_presence": 98.19223452023571
+        },
+        "overlap_f1_scores": {
+            "25": {
+                "precision": 0.7012987012987013,
+                "recall": 0.7941176470588235,
+                "f1": 0.7448275862068966,
+                "tp": 216.0,
+                "fp": 92.0,
+                "fn": 56.0
+            },
+            "50": {
+                "precision": 0.6590909090909091,
+                "recall": 0.7463235294117647,
+                "f1": 0.7000000000000001,
+                "tp": 203.0,
+                "fp": 105.0,
+                "fn": 69.0
+            }
+        },
+        "segmental_edit_score": 70.7792207792208,
+        "segment_statistics": {
+            "num_true_segments": 272,
+            "num_pred_segments": 308,
+            "edit_distance": 90
+        }
+    }
+}
