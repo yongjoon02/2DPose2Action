@@ -16,6 +16,7 @@ from src.models import TCN
 from src.yolo_pose_csv_kdy import process_video, process_csv_files, get_available_folder
 from src.datasets import class_mapping
 from src.utils import set_seed
+from src.Rerun_visualize import rerun_visualize
 
 def load_model_from_checkpoint(checkpoint_path, config, device):
     """체크포인트에서 모델을 로드하는 함수"""
@@ -309,6 +310,14 @@ def main():
             inference_video(video_path, model, device, temp_dir, output_dir)
         
         print(f"\n추론 완료! 결과는 {output_dir} 디렉토리에 저장되었습니다.")
+        
+        print("\n시각화 시작...")
+        rerun_visualize(
+            csv_dir=Path(os.path.join(temp_dir, "processed")),
+            pred_dir=Path(output_dir),
+            video_dir=Path(video_dir),
+            title="skeleton_label_compare"
+        )
         
     except FileNotFoundError as e:
         print(f"오류: {e}")
