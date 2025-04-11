@@ -33,7 +33,7 @@ def process_video(video_path, model_path, device, result_folder):
         results = model(video_path,
                         task='pose',
                         stream=True,
-                        save=False,      # 영상 저장하지 않음
+                        save=True,      # 영상 저장하지 않음
                         device=device,
                         verbose=False)
     except Exception as e:

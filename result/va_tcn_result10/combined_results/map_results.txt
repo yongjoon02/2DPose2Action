@@ -1,0 +1,8 @@
+mAP: 0.7982
+
+클래스별 AP:
+standing: 0.7121
+sitting: 0.8749
+walking: 0.9444
+no_activity: 0.9279
+no_presence: 0.5315

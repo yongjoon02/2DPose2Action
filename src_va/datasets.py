@@ -18,7 +18,7 @@ def _apply_moving_average(coords, window_size=3):
 def _normalize_coords(coords):
     mean = np.mean(coords, axis=0)
     std = np.std(coords, axis=0)
-    std = np.where(std < 1e-8, 1.0, std)
+    std = np.where(std < 1e-8, 1.0, std)  # 분산이 너무 작으면 1로 대체
     return (coords - mean) / std
 
 class SkeletonDataset(Dataset):
@@ -59,115 +59,119 @@ class SkeletonDataset(Dataset):
                 
                 # 'frame' 열이 있는 경우 처리
                 if 'frame' in df.columns:
-                    df = df[df['frame'] != 'frame']  # 중복된 헤더 행 제거
+                    df = df[df['frame'] != 'frame']  # 혹시 중복된 헤더행 제거
                     frames = df['frame'].values.astype(np.int64)
                 else:
                     frames = np.arange(len(df))
                 
                 # 최대 프레임 번호
                 max_frame = max(frames) if len(frames) > 0 else len(df)
-                # 모든 프레임에 기본값 (no_activity) 할당
+                # 모든 프레임에 기본값 (no_activity=3) 할당
                 labels = np.ones(int(max_frame) + 1, dtype=np.int64) * 3
                 
-                # CSV 파일이 비어있는 경우 기본적으로 no_activity로 설정
+                # CSV 파일이 비어있거나 결측만 있는 경우
                 is_empty_data = df.empty or len(df) == 0 or df.isnull().all().all()
                 
-                # JSON 파일에서 활동 정보 로드
+                # JSON 로드
                 json_path = os.path.join(self.json_dir, filename.replace(".csv", ".json"))
                 with open(json_path, 'r') as f:
                     info = json.load(f)
                 
-                # no_presence 여부 확인
+                # is_no_presence: “파일 전체가 no_presence인지”를 표시할지 여부
                 is_no_presence = False
                 
-                # 리스트 형태인 경우
+                # (1) JSON이 리스트 형태일 때 - 여러 frameRange가 있을 수 있음
                 if isinstance(info, list):
-                    # 먼저 no_presence 확인
+                    # 프레임 구간별로 라벨 할당
                     for item in info:
-                        if "activity" in item and item["activity"] == "no_presence":
-                            is_no_presence = True
-                            # no_presence가 있으면 모든 프레임에 no_presence 레이블 할당
-                            labels[:] = 4
-                            break
-                    
-                    # no_presence가 아닌 경우 일반 활동 처리
-                    if not is_no_presence:
-                        for item in info:
-                            if "frameRange" in item and "activity" in item:
-                                start_frame, end_frame = item["frameRange"]
-                                activity = item["activity"]
-                                
-                                # 매핑된 레이블 있는지 확인
-                                if activity in self.activity_to_label:
-                                    label = self.activity_to_label[activity]
-                                    # 해당 프레임 범위에 레이블 할당
-                                    labels[start_frame:end_frame] = label
-                                else:
-                                    unknown_activities.add(activity)
+                        if "frameRange" in item and "activity" in item:
+                            start_frame, end_frame = item["frameRange"]
+                            activity = item["activity"]
+                            
+                            # 매핑된 레이블 있는지 확인
+                            if activity in self.activity_to_label:
+                                label = self.activity_to_label[activity]
+                                labels[start_frame:end_frame] = label
+                                # 일부 구간이 no_presence면 is_no_presence = True로 기록
+                                if label == 4:
+                                    is_no_presence = True
+                            else:
+                                unknown_activities.add(activity)
                 
-                # 딕셔너리 형태인 경우
-                elif isinstance(info, dict) and "activity" in info:
-                    activity = info["activity"]
-                    if activity in self.activity_to_label:
-                        label = self.activity_to_label[activity]
-                        # 모든 프레임에 레이블 할당
-                        labels[:] = label
-                        
-                        # no_presence 확인
-                        if activity == "no_presence":
-                            is_no_presence = True
-                    else:
-                        unknown_activities.add(activity)
+                # (2) JSON이 dict 형태일 때 - 단일 activity or frameRange 가능
+                elif isinstance(info, dict):
+                    # frameRange가 있으면 부분 라벨링, 없으면 전 구간
+                    if "frameRange" in info and "activity" in info:
+                        start_frame, end_frame = info["frameRange"]
+                        activity = info["activity"]
+                        if activity in self.activity_to_label:
+                            label = self.activity_to_label[activity]
+                            labels[start_frame:end_frame] = label
+                            if label == 4:
+                                is_no_presence = True
+                        else:
+                            unknown_activities.add(activity)
+                    elif "activity" in info:
+                        activity = info["activity"]
+                        if activity in self.activity_to_label:
+                            label = self.activity_to_label[activity]
+                            labels[:] = label
+                            if label == 4:
+                                is_no_presence = True
+                        else:
+                            unknown_activities.add(activity)
+
+                # 빈 데이터이고, 일부라도 no_presence 구간이 찍혔다면
+                if is_empty_data:
+                    # 이미 frameRange로 라벨을 매겼을 텐데, 혹시 no_presence라면 전부 no_presence로 둘 수도 있음
+                    # 필요에 따라 로직을 더 세분화 가능
+                    if is_no_presence:
+                        labels[:] = 4
+                    # else: 기본값 no_activity(3) 그대로
                 
-                # 빈 데이터이고 no_presence로 확인된 경우
-                if is_empty_data and is_no_presence:
-                    # 모든 프레임에 no_presence 레이블 할당
-                    labels[:] = 4
-                
-                # 실제 데이터 프레임에 맞는 레이블 추출
+                # 실제 사용할 프레임에 맞게 slicing
                 frame_labels = labels[frames]
                 file_frame_labels[filename] = (frames, frame_labels, is_no_presence)
                 total_frames += len(frames)
                 
             except Exception as e:
                 print(f"Error processing {filename}: {e}")
-                # JSON 파일에서 no_presence 확인 시도
+                
+                # (a) JSON 분석 실패 -> fallback
                 try:
                     json_path = os.path.join(self.json_dir, filename.replace(".csv", ".json"))
                     with open(json_path, 'r') as f:
                         info = json.load(f)
                     
-                    is_no_presence = False
-                    # 리스트 형태의 JSON
+                    fallback_no_presence = False
                     if isinstance(info, list):
                         for item in info:
                             if "activity" in item and item["activity"] == "no_presence":
-                                is_no_presence = True
+                                fallback_no_presence = True
                                 break
-                    # 딕셔너리 형태의 JSON
                     elif isinstance(info, dict) and "activity" in info and info["activity"] == "no_presence":
-                        is_no_presence = True
+                        fallback_no_presence = True
                     
-                    # CSV 파일 확인
+                    # CSV 로드 시도
                     csv_path = os.path.join(self.csv_dir, filename)
                     df = pd.read_csv(csv_path)
                     frames = np.arange(len(df))
                     
-                    # no_presence인 경우와 아닌 경우 처리
-                    if is_no_presence:
-                        frame_labels = np.ones(len(frames), dtype=np.int64) * 4  # no_presence
+                    if fallback_no_presence:
+                        frame_labels = np.ones(len(frames), dtype=np.int64) * 4
                     else:
-                        frame_labels = np.ones(len(frames), dtype=np.int64) * 3  # no_activity
-                    
-                    file_frame_labels[filename] = (frames, frame_labels, is_no_presence)
+                        frame_labels = np.ones(len(frames), dtype=np.int64) * 3
+                        
+                    file_frame_labels[filename] = (frames, frame_labels, fallback_no_presence)
+                
                 except Exception as inner_e:
                     print(f"Error during fallback processing {filename}: {inner_e}")
-                    # 모든 시도가 실패한 경우 기본값 설정
+                    # 모든 시도가 실패한 경우, 기본적으로 no_activity로 설정
                     try:
                         csv_path = os.path.join(self.csv_dir, filename)
                         df = pd.read_csv(csv_path)
                         frames = np.arange(len(df))
-                        frame_labels = np.ones(len(frames), dtype=np.int64) * 3  # no_activity
+                        frame_labels = np.ones(len(frames), dtype=np.int64) * 3
                         file_frame_labels[filename] = (frames, frame_labels, False)
                     except:
                         pass
@@ -222,7 +226,6 @@ class SkeletonDataset(Dataset):
             
             # CSV 파일이 비어있거나 데이터가 올바르지 않은 경우 처리
             if df.empty or len(df) == 0 or df.isnull().all().all():
-                # no_presence 정보에 따라 레이블 할당
                 coords = torch.zeros((100, len(joint_columns) if joint_columns else 34), dtype=torch.float32)
                 if is_no_presence:
                     labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
@@ -236,16 +239,15 @@ class SkeletonDataset(Dataset):
             # 데이터가 모두 0이거나 NaN인 경우
             if np.isnan(coords).all() or np.all(coords == 0):
                 coords = torch.zeros((100, len(joint_columns)), dtype=torch.float32)
-                # 미리 계산된 no_presence 정보 사용
                 if is_no_presence:
-                    labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
+                    labels = torch.ones(100, dtype=torch.long) * 4
                 else:
-                    labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
+                    labels = torch.ones(100, dtype=torch.long) * 3
                 return coords, labels
-                
+            
             coords = _apply_moving_average(coords, window_size=3)
             coords = _normalize_coords(coords)
-                
+            
             # 텐서로 변환
             coords = torch.tensor(coords, dtype=torch.float32)
             frame_labels = torch.tensor(frame_labels, dtype=torch.long)
@@ -258,25 +260,23 @@ class SkeletonDataset(Dataset):
         
         except Exception as e:
             print(f"Error loading {self.csv_files[idx]}: {e}")
-            # 파일을 로드할 수 없는 경우, 미리 계산된 레이블 정보를 확인
+            # 예외 발생 시 fallback
             try:
                 filename = self.csv_files[idx]
                 if filename in self.file_frame_labels:
                     _, _, is_no_presence = self.file_frame_labels[filename]
-                    
-                    # no_presence 정보에 따라 적절한 레이블 할당
                     coords = torch.zeros((100, 34), dtype=torch.float32)
                     if is_no_presence:
-                        labels = torch.ones(100, dtype=torch.long) * 4  # no_presence
+                        labels = torch.ones(100, dtype=torch.long) * 4
                     else:
-                        labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
+                        labels = torch.ones(100, dtype=torch.long) * 3
                     return coords, labels
             except:
                 pass
-                
-            # 모든 시도가 실패한 경우 기본값: no_activity
+            
+            # 모든 시도가 실패하면 no_activity
             coords = torch.zeros((100, 34), dtype=torch.float32)
-            labels = torch.ones(100, dtype=torch.long) * 3  # no_activity
+            labels = torch.ones(100, dtype=torch.long) * 3
             return coords, labels
     
     def get_class_distribution(self):
