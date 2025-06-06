@@ -1,0 +1,10 @@
+1-45 SIL 
+45-153 take_plate 
+153-253 take_bowl 
+253-2057 cut_fruit 
+2057-2337 put_fruit2bowl 
+2337-2727 cut_fruit 
+2727-4826 peel_fruit 
+4826-5266 cut_fruit 
+5266-5436 put_fruit2bowl 
+5436-5448 SIL 

@@ -1,0 +1,12 @@
+1-20 SIL 
+20-80 take_plate 
+80-205 take_knife 
+205-1920 peel_fruit 
+1920-2090 take_bowl 
+2090-2300 cut_fruit 
+2300-2320 put_fruit2bowl 
+2320-2390 cut_fruit 
+2390-2415 put_fruit2bowl 
+2415-3445 cut_fruit 
+3445-3715 put_fruit2bowl 
+3715-3847 SIL 

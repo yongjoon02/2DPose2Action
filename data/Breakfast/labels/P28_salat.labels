@@ -1,0 +1,10 @@
+1-10 SIL 
+10-140 cut_fruit 
+140-520 peel_fruit 
+520-1265 cut_fruit 
+1265-1615 put_fruit2bowl 
+1615-1775 cut_fruit 
+1775-3135 peel_fruit 
+3135-3945 cut_fruit 
+3945-4125 put_fruit2bowl 
+4125-4275 SIL 

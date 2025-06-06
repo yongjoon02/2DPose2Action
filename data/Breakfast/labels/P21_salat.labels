@@ -1,0 +1,9 @@
+1-30 SIL 
+30-895 cut_fruit 
+895-1435 peel_fruit 
+1435-2200 cut_fruit 
+2200-2260 peel_fruit 
+2260-3110 cut_fruit 
+3110-3180 take_bowl 
+3180-3580 put_fruit2bowl 
+3580-3692 SIL 

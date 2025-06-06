@@ -1,0 +1,12 @@
+1-483 SIL 
+483-548 take_knife 
+548-703 cut_fruit 
+703-853 take_bowl 
+853-2633 cut_fruit 
+2633-2960 put_fruit2bowl 
+2960-3310 cut_fruit 
+3310-3740 peel_fruit 
+3740-4110 cut_fruit 
+4110-4200 put_fruit2bowl 
+4200-4375 stir_fruit 
+4375-4453 SIL 

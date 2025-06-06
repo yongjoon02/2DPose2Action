@@ -1,0 +1,11 @@
+1-11 SIL 
+11-41 take_bowl 
+41-986 cut_fruit 
+986-1096 put_fruit2bowl 
+1096-1396 cut_fruit 
+1396-2156 peel_fruit 
+2156-2516 put_fruit2bowl 
+2516-3176 peel_fruit 
+3176-3315 cut_fruit 
+3315-3375 put_fruit2bowl 
+3375-3435 SIL 

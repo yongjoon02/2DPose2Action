@@ -1,0 +1,16 @@
+1-1 SIL 
+1-519 crack_egg 
+519-1211 spoon_flour 
+1211-1382 pour_milk 
+1382-1640 stir_dough 
+1640-1938 butter_pan 
+1938-2285 stir_dough 
+2285-2366 pour_milk 
+2366-2601 stir_dough 
+2601-3076 pour_dough2pan 
+3076-5210 fry_pancake 
+5210-5387 take_plate 
+5387-5634 put_pancake2plate 
+5634-6657 fry_pancake 
+6657-6793 put_pancake2plate 
+6793-6817 SIL 

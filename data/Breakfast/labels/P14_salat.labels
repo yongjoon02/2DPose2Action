@@ -1,0 +1,11 @@
+1-6 SIL 
+6-671 cut_fruit 
+671-1901 peel_fruit 
+1901-2041 take_knife 
+2041-2606 cut_fruit 
+2606-2725 put_fruit2bowl 
+2725-2865 cut_fruit 
+2865-2885 put_fruit2bowl 
+2885-3165 cut_fruit 
+3165-3367 put_fruit2bowl 
+3367-3421 SIL 

@@ -542,250 +542,191 @@ def calculate_overlap_f1(true_labels, pred_labels, thresholds=[0.25, 0.5]):
         'num_pred_segments': num_pred_segments
     }
 
-def evaluate_and_save_test_results(model, test_loader, criterion, config, result_dir):
+def evaluate_and_save_test_results(model, test_loader, criterion, config, file_path_prefix, class_mapping, device):
     """
-    테스트 데이터셋에 대한 모델 평가 및 결과 저장
+    테스트 데이터셋에서 모델을 평가하고 결과를 저장하는 함수
+    
+    Args:
+        model: 평가할 모델
+        test_loader: 테스트 데이터셋 로더
+        criterion: 손실 함수
+        config: 설정 정보
+        file_path_prefix: 결과 파일 저장 경로
+        class_mapping: 클래스 매핑 정보
+        device: 연산 장치
+        
+    Returns:
+        test_loss, test_acc: 테스트 손실 및 정확도
     """
-    device = config["training"]["device"]
     model.eval()
+    test_loss = 0.0
+    correct = 0
+    total = 0
     
-    # 테스트 세트에 대한 평가
-    test_loss, test_acc, test_preds, test_labels = validate(model, test_loader, criterion, device)
+    # 예측 결과를 저장할 리스트
+    y_true = []
+    y_pred = []
+    y_scores = []
     
-    # 확률 점수 계산을 위한 변수 준비
-    all_true_labels = []
-    all_pred_scores = []
-    
-    # 모델 예측 확률 얻기
     with torch.no_grad():
         for inputs, labels in test_loader:
-            batch_size = len(inputs)
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
             
-            for i in range(batch_size):
-                # 현재 시퀀스 데이터와 레이블
-                seq = inputs[i].to(device)  # shape: [seq_len, features]
-                seq_labels = labels[i].to(device)  # shape: [seq_len]
-                
-                # 배치 차원 추가
-                seq = seq.unsqueeze(0)  # shape: [1, seq_len, features]
-                
-                # 모델을 통과 (출력 shape: [1, seq_len, num_classes])
-                outputs = model(seq)
-                
-                # 배치 차원 제거 (shape: [seq_len, num_classes])
-                outputs = outputs.squeeze(0)
-                
-                # 소프트맥스 적용하여 확률 계산
-                probs = torch.nn.functional.softmax(outputs, dim=1)
-                
-                # 확률 점수와 레이블 저장
-                all_true_labels.extend(seq_labels.cpu().numpy())
-                all_pred_scores.extend(probs.cpu().numpy())
+            test_loss += loss.item()
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+            
+            # 결과 수집
+            y_true.extend(labels.cpu().numpy())
+            y_pred.extend(predicted.cpu().numpy())
+            y_scores.extend(outputs.cpu().numpy())
     
-    # 리스트를 배열로 변환
-    all_true_labels = np.array(all_true_labels)
-    all_pred_scores = np.array(all_pred_scores)
+    test_loss = test_loss / len(test_loader)
+    test_acc = 100.0 * correct / total
     
-    # mAP 계산
-    mAP, class_ap = calculate_map(all_true_labels, all_pred_scores)
+    # 넘파이 배열로 변환
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    y_scores = np.array(y_scores)
     
-    # 결과 디렉토리 설정
-    combined_results_dir = os.path.join(result_dir, "combined_results")
-    os.makedirs(combined_results_dir, exist_ok=True)
-    
-    # config에서 클래스 라벨을 가져오거나, class_mapping에서 가져옴
+    # config에서 클래스 레이블을 가져옴, 없으면 class_mapping에서 가져옴
     if "class_labels" in config:
         all_class_names = config["class_labels"]
     else:
-        all_class_names = [class_mapping[i] for i in range(len(class_mapping))]
+        all_class_names = list(class_mapping.keys())
     
-    # 실제 존재하는 클래스만 필터링
-    unique_labels = np.unique(test_labels)
-    class_names = [all_class_names[i] for i in unique_labels]
+    # 결과를 저장할 디렉토리 생성
+    os.makedirs(os.path.dirname(file_path_prefix), exist_ok=True)
     
-    # 분류 보고서 생성
-    report = classification_report(test_labels, test_preds, target_names=class_names)
-    print("\nTest Classification Report:")
-    print(report)
+    # 전체 예측 결과를 저장
+    file_predictions = {}
     
-    # 분류 보고서 저장
-    with open(os.path.join(combined_results_dir, "classification_report.txt"), 'w') as f:
-        f.write(report)
+    # 각 샘플에 대해 결과 처리
+    dataset = test_loader.dataset
+    for idx, (true_label, pred_label, pred_scores) in enumerate(zip(y_true, y_pred, y_scores)):
+        try:
+            filename = dataset.get_filename(idx)
+        except (AttributeError, IndexError):
+            filename = f"file_{idx}"
+            
+        if filename not in file_predictions:
+            file_predictions[filename] = {
+                "frame_indices": [],
+                "true_labels": [],
+                "predicted_labels": [],
+                "probabilities": []
+            }
+            
+        file_predictions[filename]["frame_indices"].append(idx)
+        file_predictions[filename]["true_labels"].append(int(true_label))
+        file_predictions[filename]["predicted_labels"].append(int(pred_label))
+        file_predictions[filename]["probabilities"].append(pred_scores.tolist())
+    
+    # 각 파일별 활동 세그먼트 생성
+    for filename, predictions in file_predictions.items():
+        # 예측된 레이블에서 활동 세그먼트 생성
+        pred_labels = predictions["predicted_labels"]
+        activity_segments = []
+        
+        if len(pred_labels) > 0:
+            current_activity = pred_labels[0]
+            start_idx = 0
+            
+            for i in range(1, len(pred_labels)):
+                if pred_labels[i] != current_activity:
+                    # 전환 지점에서 세그먼트 종료
+                    activity_segments.append({
+                        "start_frame": predictions["frame_indices"][start_idx],
+                        "end_frame": predictions["frame_indices"][i-1],
+                        "activity_id": int(current_activity),
+                        "activity_name": all_class_names[int(current_activity)]
+                    })
+                    current_activity = pred_labels[i]
+                    start_idx = i
+            
+            # 마지막 활동 세그먼트 추가
+            activity_segments.append({
+                "start_frame": predictions["frame_indices"][start_idx],
+                "end_frame": predictions["frame_indices"][-1],
+                "activity_id": int(current_activity),
+                "activity_name": all_class_names[int(current_activity)]
+            })
+        
+        predictions["activity_segments"] = activity_segments
+    
+    # 개별 파일 예측 저장을 위한 디렉토리 생성
+    file_predictions_dir = os.path.join(os.path.dirname(file_path_prefix), "file_predictions")
+    os.makedirs(file_predictions_dir, exist_ok=True)
+    
+    # 각 파일별 예측 결과 저장
+    for filename, predictions in file_predictions.items():
+        with open(os.path.join(file_predictions_dir, f"{filename}_prediction.json"), "w") as f:
+            json.dump(predictions, f, indent=2)
+    
+    # 모든 파일 예측 결과를 하나의 JSON 파일로 저장
+    with open(os.path.join(os.path.dirname(file_path_prefix), "all_file_predictions.json"), "w") as f:
+        json.dump(file_predictions, f, indent=2)
+    
+    # 분류 보고서 생성 및 저장
+    classification_report_dict = classification_report(y_true, y_pred, output_dict=True)
+    
+    # 클래스별 정확도, 정밀도, 재현율, F1 점수 저장
+    with open(f"{file_path_prefix}/classification_report.json", "w") as f:
+        json.dump(classification_report_dict, f, indent=4)
+    
+    with open(f"{file_path_prefix}/classification_report.txt", "w") as f:
+        f.write(classification_report(y_true, y_pred))
     
     # 클래스별 정확도 계산 및 저장
     class_accuracy = {}
     for i, class_name in enumerate(all_class_names):
-        mask = (np.array(test_labels) == i)
-        if np.sum(mask) > 0:
-            correct = np.sum((np.array(test_preds)[mask] == i))
-            total = np.sum(mask)
-            acc = correct / total * 100
-            class_accuracy[class_name] = acc
+        mask = (y_true == i)
+        if np.sum(mask) > 0:  # 해당 클래스 샘플이 존재하는 경우에만 계산
+            class_accuracy[class_name] = np.mean(y_pred[mask] == i)
+        else:
+            class_accuracy[class_name] = 0.0
     
-    # 클래스별 정확도 저장 (CSV 파일용 문자열 포맷)
-    class_acc_df = pd.DataFrame(
-        {'Class': list(class_accuracy.keys()), 
-         'Accuracy': [f"{acc:.2f}%" for acc in class_accuracy.values()]}
-    )
-    class_acc_df.to_csv(os.path.join(combined_results_dir, "class_accuracy.csv"), index=False)
+    with open(f"{file_path_prefix}/class_accuracy.json", "w") as f:
+        json.dump(class_accuracy, f, indent=4)
     
     # 혼동 행렬 생성 및 저장
-    cm = confusion_matrix(test_labels, test_preds)
-    save_confusion_matrix_png(
-        cm, 
-        class_names,
-        os.path.join(combined_results_dir, "confusion_matrix.png")
-    )
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(12, 10))
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", 
+                xticklabels=all_class_names, 
+                yticklabels=all_class_names)
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.title("Confusion Matrix")
+    plt.savefig(f"{file_path_prefix}/confusion_matrix.png")
     
-    # 클래스 매핑 정보 저장
-    with open(os.path.join(combined_results_dir, "class_mapping.txt"), 'w') as f:
-        f.write("Class mapping:\n")
-        for i, name in enumerate(all_class_names):
-            f.write(f"{i}: {name}\n")
+    # 혼동 행렬을 CSV 파일로 저장
+    cm_df = pd.DataFrame(cm, index=all_class_names, columns=all_class_names)
+    cm_df.to_csv(f"{file_path_prefix}/confusion_matrix.csv")
     
-    # Overlap F1 Score 계산
-    overlap_f1_scores = calculate_overlap_f1(test_labels, test_preds, thresholds=[0.25, 0.5])
-    
-    # Segmental Edit Score 계산
-    edit_score, segment_info = calculate_segmental_edit_score(test_labels, test_preds)
-    
-    # Overlap F1 Score 저장
-    with open(os.path.join(combined_results_dir, "overlap_f1_results.txt"), 'w') as f:
-        f.write("F1 Overlap Score 결과\n\n")
-        f.write(f"총 세그먼트 수: 실제={overlap_f1_scores['num_true_segments']}, 예측={overlap_f1_scores['num_pred_segments']}\n\n")
+    # Average precision 계산 및 저장
+    average_precision = {}
+    for i, class_name in enumerate(all_class_names):
+        y_true_binary = (y_true == i).astype(int)
+        y_score = y_scores[:, i]
         
-        for threshold, metrics in overlap_f1_scores['thresholds'].items():
-            f.write(f"임계값 {int(float(threshold)*100)}%:\n")
-            f.write(f"  Precision: {metrics['precision']:.4f}\n")
-            f.write(f"  Recall: {metrics['recall']:.4f}\n")
-            f.write(f"  F1 Score: {metrics['f1']:.4f}\n")
-            f.write(f"  TP: {metrics['tp']}, FP: {metrics['fp']}, FN: {metrics['fn']}\n\n")
+        try:
+            ap = average_precision_score(y_true_binary, y_score)
+            average_precision[class_name] = float(ap)
+        except Exception as e:
+            print(f"클래스 {class_name}에 대한 average precision 계산 중 오류 발생: {e}")
+            average_precision[class_name] = 0.0
     
-    # Segmental Edit Score 저장
-    with open(os.path.join(combined_results_dir, "segmental_edit_score.txt"), 'w') as f:
-        f.write("Segmental Edit Score 결과\n\n")
-        f.write(f"총 세그먼트 수: 실제={segment_info['num_true_segments']}, 예측={segment_info['num_pred_segments']}\n")
-        f.write(f"Edit Distance: {segment_info['edit_distance']}\n")
-        f.write(f"Normalized Edit Score: {edit_score:.4f}\n")
+    # 전체 평균 precision 추가
+    average_precision["macro_avg"] = np.mean(list(average_precision.values()))
     
-    # Overlap F1 Score를 CSV로 저장
-    overlap_data = []
-    for threshold, metrics in overlap_f1_scores['thresholds'].items():
-        overlap_data.append({
-            'Threshold': f"{int(float(threshold)*100)}%",
-            'Precision': f"{metrics['precision']:.4f}",
-            'Recall': f"{metrics['recall']:.4f}",
-            'F1': f"{metrics['f1']:.4f}",
-            'TP': metrics['tp'],
-            'FP': metrics['fp'],
-            'FN': metrics['fn']
-        })
+    with open(f"{file_path_prefix}/average_precision.json", "w") as f:
+        json.dump(average_precision, f, indent=4)
     
-    overlap_df = pd.DataFrame(overlap_data)
-    overlap_df.to_csv(os.path.join(combined_results_dir, "overlap_f1_results.csv"), index=False)
-    
-    # Overlap F1 Score 차트 생성
-    thresholds = [f"{int(float(t)*100)}%" for t in overlap_f1_scores['thresholds'].keys()]
-    f1_scores = [metrics['f1'] for metrics in overlap_f1_scores['thresholds'].values()]
-    
-    plt.figure(figsize=(10, 6))
-    bars = plt.bar(thresholds, f1_scores, color='skyblue')
-    plt.title('F1 Overlap Score by Threshold')
-    plt.xlabel('Threshold')
-    plt.ylabel('F1 Score')
-    plt.ylim(0, 1.0)
-    
-    # 막대 위에 값 표시
-    for bar, score in zip(bars, f1_scores):
-        plt.text(bar.get_x() + bar.get_width()/2.,
-                 bar.get_height() + 0.02,
-                 f'{score:.4f}',
-                 ha='center')
-    
-    plt.savefig(os.path.join(combined_results_dir, "overlap_f1_chart.png"))
-    plt.close()
-    
-    # 테스트 결과 저장
-    with open(os.path.join(combined_results_dir, "test_results.txt"), 'w') as f:
-        f.write(f"테스트 정확도: {test_acc*100:.2f}%\n")
-    
-    # mAP 결과 저장
-    with open(os.path.join(combined_results_dir, "map_results.txt"), 'w') as f:
-        f.write(f"mAP: {mAP:.4f}\n\n")
-        f.write("클래스별 AP:\n")
-        for class_idx, ap in class_ap.items():
-            class_name = all_class_names[class_idx]
-            f.write(f"{class_name}: {ap:.4f}\n")
-    
-    # 하이퍼파라미터 및 결과 정보 저장
-    hyperparams = {
-        "training": {
-            "batch_size": config["training"].get("batch_size", 32),
-            "num_epochs": config["training"].get("num_epochs", 200),
-            "learning_rate": config["training"].get("learning_rate", 0.001),
-            "weight_decay": 1e-5,
-            "early_stopping_patience": 30,
-            "optimizer": "Adam",
-            "scheduler": "ReduceLROnPlateau",
-            "scheduler_params": {
-                "factor": 0.5,
-                "patience": 5
-            }
-        },
-        "model": {
-            "type": "TCN",
-            "input_size": config["model"].get("input_size", 34),
-            "output_size": len(all_class_names),
-            "hidden_channels": config["model"].get("num_channels", [64, 128, 256]),
-            "kernel_size": config["model"].get("kernel_size", 3),
-            "dropout": config["model"].get("dropout", 0.2)
-        },
-        "classes": all_class_names,
-        "device": device,
-        "seed": 42,
-        "environment": {
-            "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "python_version": "3.10.0",
-            "pytorch_version": "2.0.0",
-            "numpy_version": "1.24.0"
-        },
-        "results": {
-            "test_accuracy": test_acc * 100,
-            "class_accuracy": {class_name: float(acc) for class_name, acc in class_accuracy.items()},
-            "mAP": float(mAP * 100),  # 계산된 mAP 사용
-            "class_ap": {all_class_names[c]: float(ap * 100) for c, ap in class_ap.items()},
-            "overlap_f1_scores": {
-                str(int(float(threshold)*100)): {
-                    "precision": float(metrics["precision"]),
-                    "recall": float(metrics["recall"]),
-                    "f1": float(metrics["f1"]),
-                    "tp": int(metrics["tp"]),
-                    "fp": int(metrics["fp"]),
-                    "fn": int(metrics["fn"])
-                } for threshold, metrics in overlap_f1_scores['thresholds'].items()
-            },
-            "segmental_edit_score": float(edit_score),
-            "segment_statistics": {
-                "num_true_segments": int(segment_info["num_true_segments"]),
-                "num_pred_segments": int(segment_info["num_pred_segments"]),
-                "edit_distance": int(segment_info["edit_distance"])
-            }
-        }
-    }
-    
-    # 하이퍼파라미터 JSON 저장
-    with open(os.path.join(combined_results_dir, "hyperparameters.json"), 'w', encoding='utf-8') as f:
-        json.dump(hyperparams, f, indent=4, ensure_ascii=False)
-    
-    return {
-        "accuracy": test_acc,
-        "class_accuracy": class_accuracy,
-        "mAP": mAP,
-        "class_ap": class_ap,
-        "overlap_f1_scores": overlap_f1_scores,
-        "segmental_edit_score": edit_score,
-        "segment_statistics": segment_info
-    }
+    return test_loss, test_acc
 
 def save_confusion_matrix_png(cm, class_names, save_path):
     """혼동 행렬을 PNG로 저장하는 함수"""

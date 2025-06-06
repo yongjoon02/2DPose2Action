@@ -1,0 +1,9 @@
+1-17 SIL 
+17-162 take_plate 
+162-342 cut_orange 
+342-372 take_squeezer 
+372-1432 squeeze_orange 
+1432-1572 pour_juice 
+1572-2462 squeeze_orange 
+2462-2732 pour_juice 
+2732-2795 SIL 

@@ -1,0 +1,7 @@
+1-10 SIL 
+10-100 take_plate 
+100-1015 peel_fruit 
+1015-1900 cut_fruit 
+1900-2440 peel_fruit 
+2440-2890 cut_fruit 
+2890-3247 SIL 

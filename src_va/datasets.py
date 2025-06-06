@@ -77,7 +77,7 @@ class SkeletonDataset(Dataset):
                 with open(json_path, 'r') as f:
                     info = json.load(f)
                 
-                # is_no_presence: “파일 전체가 no_presence인지”를 표시할지 여부
+                # is_no_presence: "파일 전체가 no_presence인지"를 표시할지 여부
                 is_no_presence = False
                 
                 # (1) JSON이 리스트 형태일 때 - 여러 frameRange가 있을 수 있음
@@ -296,3 +296,9 @@ class SkeletonDataset(Dataset):
                 counts[label] += 1
             file_class_counts[filename] = counts
         return file_class_counts
+
+    def get_filename(self, idx):
+        """인덱스에 해당하는 파일 이름 반환"""
+        if idx < 0 or idx >= len(self.csv_files):
+            return f"unknown_file_{idx}"
+        return self.csv_files[idx]

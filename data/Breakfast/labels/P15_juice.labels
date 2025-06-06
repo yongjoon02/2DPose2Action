@@ -1,0 +1,7 @@
+1-20 SIL 
+20-125 cut_orange 
+125-225 take_glass 
+225-275 take_squeezer 
+275-845 squeeze_orange 
+845-1235 pour_juice 
+1235-1335 SIL 
