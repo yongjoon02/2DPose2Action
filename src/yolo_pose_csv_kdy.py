@@ -187,7 +187,7 @@ def main():
         return
     
     # 결과 폴더 이름 생성
-    results_parent_dir = os.path.join(project_root, "result")
+    results_parent_dir = os.path.join(project_root, "result_break")
     os.makedirs(results_parent_dir, exist_ok=True)
     base_result_folder = os.path.join(results_parent_dir, "breakfast_skeleton_result")
     result_folder = get_available_folder(base_result_folder)
